@@ -13,10 +13,6 @@ dist-electron
 dist-ssr
 *.local
 
-# Arcade Jeu font (GPL) — downloaded manually per README
-public/fonts/*.otf
-public/fonts/*.ttf
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
