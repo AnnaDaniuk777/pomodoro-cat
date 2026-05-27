@@ -1,0 +1,215 @@
+:root {
+  --scale: 2;
+
+  /* derived window size: natural 229×248 × scale */
+  --screen-w: calc(229px * var(--scale));
+  --screen-h: calc(248px * var(--scale));
+
+  --text: #d8def0;
+
+  --font-ui: 'Press Start 2P', monospace;
+  --font-timer: 'Arcade Jeu', 'Press Start 2P', monospace;
+}
+
+@font-face {
+  font-family: 'Arcade Jeu';
+  src: url('/fonts/ArcadeJeu-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: transparent;
+  font-family: var(--font-ui);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+img {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.screen {
+  position: relative;
+  width: var(--screen-w);
+  height: var(--screen-h);
+  -webkit-app-region: drag;
+}
+
+.screen__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.icon-btn {
+  background: none;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.icon-btn:focus,
+.icon-btn:focus-visible {
+  outline: none;
+}
+
+.icon-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.titlebar {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.titlebar__btn img {
+  width: calc(19px * var(--scale));
+  height: calc(14px * var(--scale));
+}
+
+.cat-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.cat-stage > div {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cat-stage__bowl {
+  position: absolute;
+  left: 50px;
+  top: 205px;
+  z-index: 2;
+}
+
+.cat-stage__bowl img {
+  width: calc(23px * var(--scale));
+  height: calc(11px * var(--scale));
+}
+
+.cat-stage__ball {
+  position: absolute;
+  right: 50px;
+  top: 205px;
+  z-index: 2;
+}
+
+.cat-stage__ball img {
+  width: calc(15px * var(--scale));
+  height: calc(12px * var(--scale));
+}
+
+.timer {
+  position: absolute;
+  top: 230px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(108px * var(--scale));
+  height: calc(40px * var(--scale));
+  z-index: 3;
+  pointer-events: none;
+}
+
+.timer__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.timer__text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-timer);
+  font-size: calc(20px * var(--scale));
+  letter-spacing: 2px;
+  color: var(--text);
+  padding-bottom: 4px;
+}
+
+.timer-controls {
+  position: absolute;
+  bottom: 122px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 80px;
+  z-index: 3;
+}
+
+.timer-controls__btn img {
+  width: calc(28px * var(--scale));
+  height: calc(29px * var(--scale));
+}
+
+.bottom-nav {
+  position: absolute;
+  bottom: 32px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 3;
+}
+
+.bottom-nav__todo img {
+  width: calc(51px * var(--scale));
+  height: calc(48px * var(--scale));
+}
+
+.bottom-nav__music img {
+  width: calc(61px * var(--scale));
+  height: calc(49px * var(--scale));
+}
+
+.bottom-nav__settings img {
+  width: calc(48px * var(--scale));
+  height: calc(46px * var(--scale));
+}
