@@ -8,8 +8,7 @@
     "skipLibCheck": true,
     "strict": true,
     "types": ["node"],
-    "outDir": "dist-electron",
-    "rootDir": "electron"
+    "outDir": "dist-electron"
   },
-  "include": ["electron/**/*.ts"]
+  "include": ["electron/**/*.ts", "shared/**/*.ts"]
 }

@@ -1,15 +1,15 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../shared/config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL;
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 458,
-    height: 496,
+    width: WINDOW_WIDTH,
+    height: WINDOW_HEIGHT,
     useContentSize: true,
     resizable: false,
     maximizable: false,
@@ -27,7 +27,7 @@ function createWindow() {
     win.loadURL(VITE_DEV_SERVER_URL);
     win.webContents.openDevTools({ mode: 'detach' });
   } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'));
+    win.loadFile(path.join(__dirname, '../../dist/index.html'));
   }
 
   ipcMain.on('window:minimize', () => {

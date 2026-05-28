@@ -1,12 +1,7 @@
 :root {
-  --scale: 2;
-
-  /* derived window size: natural 229×248 × scale */
   --screen-w: calc(229px * var(--scale));
   --screen-h: calc(248px * var(--scale));
-
   --text: #d8def0;
-
   --font-ui: 'Press Start 2P', monospace;
   --font-timer: 'Arcade Jeu', 'Press Start 2P', monospace;
 }
@@ -94,8 +89,8 @@ img {
 
 .titlebar {
   position: absolute;
-  top: 9px;
-  right: 9px;
+  top: 8px;
+  right: 8px;
   display: flex;
   gap: 4px;
   z-index: 10;
@@ -121,8 +116,8 @@ img {
 .cat-stage__bowl {
   position: absolute;
   left: 50px;
-  top: 205px;
-  z-index: 2;
+  top: 160px;
+  z-index: -1;
 }
 
 .cat-stage__bowl img {
@@ -133,7 +128,7 @@ img {
 .cat-stage__ball {
   position: absolute;
   right: 50px;
-  top: 205px;
+  top: 160px;
   z-index: 2;
 }
 
@@ -144,7 +139,7 @@ img {
 
 .timer {
   position: absolute;
-  top: 230px;
+  top: 185px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(108px * var(--scale));
@@ -175,7 +170,7 @@ img {
 
 .timer-controls {
   position: absolute;
-  bottom: 122px;
+  bottom: 98px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -207,6 +202,7 @@ img {
 .bottom-nav__music img {
   width: calc(61px * var(--scale));
   height: calc(49px * var(--scale));
+  margin-left: 3px;
 }
 
 .bottom-nav__settings img {

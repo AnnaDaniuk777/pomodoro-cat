@@ -2,8 +2,7 @@ import { useMemo } from 'react';
 import spriteSheet from '../assets/sprites/cat.png';
 import spriteData from '../assets/sprites/cat.json';
 import { extractFrames, useSpriteAnimation } from '../hooks/useSpriteAnimation';
-
-const SCALE = 2;
+import { SCALE } from '../../shared/config';
 
 export function Cat() {
   const frames = useMemo(() => extractFrames(spriteData), []);
