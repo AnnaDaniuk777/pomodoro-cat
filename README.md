@@ -71,6 +71,21 @@
 в индивидуальном порядке. Перед PR — пожалуйста, открой issue с описанием идеи,
 обсудим направление.
 
+### Workflow
+
+```bash
+# Каждая новая фича/багфикс — отдельная ветка
+git checkout -b feat/timer-logic
+
+# Делаешь работу, коммитишь
+git commit -m "feat(timer): add countdown logic"
+git push -u origin feat/timer-logic
+
+# Открываешь Pull Request на GitHub
+# Команда ревьюит → одобряет → merge в main
+# Issue закрывается автоматически если в PR описании есть "Closes #1"
+```
+
 ### Стиль кода
 
 - TypeScript strict
