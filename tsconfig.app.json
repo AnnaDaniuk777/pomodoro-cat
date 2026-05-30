@@ -20,7 +20,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path aliases — FSD imports use @/widgets/foo instead of ../../widgets/foo */
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src", "shared"]
 }

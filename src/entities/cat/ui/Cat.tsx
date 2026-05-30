@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import spriteSheet from '../assets/sprites/cat.png';
-import spriteData from '../assets/sprites/cat.json';
-import { extractFrames, useSpriteAnimation } from '../hooks/useSpriteAnimation';
-import { SCALE } from '../../shared/config';
+import spriteSheet from '@/shared/assets/sprites/cat.png';
+import spriteData from '@/shared/assets/sprites/cat.json';
+import { SCALE } from '../../../../shared/config';
+import { extractFrames, useSpriteAnimation } from '../lib/useSpriteAnimation';
 
 export function Cat() {
   const frames = useMemo(() => extractFrames(spriteData), []);
