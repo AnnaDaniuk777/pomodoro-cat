@@ -32,18 +32,101 @@
 
 ---
 
+## 🏗 Архитектура — Feature-Sliced Design (light)
+
+Код в `src/` разложен по **слоям FSD**. Документация методологии:
+<https://feature-sliced.design/ru/>
+
+```text
+src/
+├── app/         ← инициализация: entry, провайдеры, глобальные стили
+├── pages/       ← страницы (у нас пока одна — main)
+├── widgets/     ← композитные блоки экрана (titlebar, cat-stage, ...)
+├── features/    ← (пусто пока) пользовательские действия (start-timer, add-task, ...)
+├── entities/    ← бизнес-сущности (cat; позже — timer, task, track, settings)
+└── shared/      ← переиспользуемое без бизнес-смысла (ui-kit, libs, assets)
+```
+
+### Главное правило: импорты только сверху вниз
+
+```text
+app → pages → widgets → features → entities → shared
+```
+
+- `widgets/titlebar` может импортить из `shared/`, `entities/`, `features/` ✓
+- `entities/cat` НЕ может импортить из `widgets/` или `features/` ✗
+- Слайсы внутри одного слоя друг от друга **не зависят** (`widgets/titlebar` не лезет в `widgets/cat-stage`)
+
+Это даёт **гарантированную развязанность**: фичу можно удалить или переписать, не сломав соседние.
+
+### Public API через `index.ts`
+
+Каждый слайс наружу торчит **только тем что экспортит из своего `index.ts`**. Внутренности недоступны:
+
+```ts
+// src/entities/cat/index.ts
+export { Cat } from './ui/Cat';
+// useSpriteAnimation НЕ экспортится — это внутренняя кухня entity
+
+// src/widgets/cat-stage/ui/CatStage.tsx
+import { Cat } from '@/entities/cat';                       // ✓ через Public API
+import { useSpriteAnimation } from '@/entities/cat/lib/...'; // ✗ нельзя
+```
+
+### Структура слайса (сегменты)
+
+```text
+src/<layer>/<slice>/
+├── ui/        ← React-компоненты (отвечают только за рендер)
+├── model/     ← состояние и логика (Zustand-сторы, селекторы)
+├── lib/       ← вспомогательные функции, хуки
+├── api/       ← сетевые вызовы (у нас пока пусто)
+└── index.ts   ← Public API
+```
+
+Не все сегменты обязательны — добавляются по необходимости.
+
+### Path alias
+
+В `vite.config.ts` и `tsconfig.app.json` настроен алиас:
+
+```ts
+'@/*' → 'src/*'
+```
+
+Импорты выглядят так: `import { Cat } from '@/entities/cat';` вместо `'../../../../entities/cat'`.
+
+### Workflow для новой фичи
+
+Пример: добавляем логику таймера (Issue #1).
+
+1. **Создаём entity** `src/entities/timer/`:
+   - `model/store.ts` — Zustand store: `timeLeft`, `isRunning`, actions
+   - `model/useTimerCountdown.ts` — хук с `setInterval`
+   - `lib/format.ts` — `formatTime(seconds): "25:00"`
+   - `ui/TimerDisplay.tsx` — `<span>{formatted}</span>`
+   - `index.ts` — экспортит `useTimerStore`, `TimerDisplay`
+2. **Создаём features** в `src/features/`:
+   - `start-timer/ui/StartButton.tsx` — вызывает `useTimerStore.start()`
+   - `reset-timer/ui/ResetButton.tsx` — вызывает `useTimerStore.reset()`
+3. **Обновляем widget** `src/widgets/timer-panel`:
+   - Заменяем плейсхолдер `<span>25:00</span>` на `<TimerDisplay />`
+   - Заменяем плейсхолдер `IconButton` на `<StartButton />` и `<ResetButton />`
+
+Page (`MainScreen`) и другие виджеты — не трогаем. Изменения локализованы.
+
+---
+
 ## ⌨ Архитектурные принципы
 
-Стараемся придерживаться:
+В дополнение к FSD стараемся придерживаться:
 
-- **DRY** — повторяющиеся UI-паттерны выносим в компоненты (см. `IconButton.tsx`),
-  магические числа — в CSS-переменные.
-- **KISS** — пока в проекте не появился реальный кейс на разделение, держим логику
-  компактно. Без преждевременной декомпозиции.
-- **YAGNI** — не добавляем фичи «впрок». Сначала кейс, потом код.
-- **SRP** — каждый файл/компонент отвечает за одну вещь.
-  `App.tsx` — композиция экрана, `IconButton.tsx` — одна кнопка с PNG,
-  `useSpriteAnimation.ts` — только проигрывание кадров.
+- **DRY** — повторяющиеся UI-паттерны выносим в `shared/ui/`,
+  магические числа — в CSS-переменные (`--scale` etc.) и `shared/config.ts`.
+- **KISS** — без преждевременной декомпозиции. Файлов делаем столько, сколько реально нужно.
+- **YAGNI** — не добавляем фичи «впрок». Сначала кейс — потом код.
+- **SRP** — каждый файл отвечает за одно: `ui/` рендерит, `model/` хранит состояние,
+  `lib/` помогает.
 
 ---
 
