@@ -6,6 +6,11 @@ type IconButtonProps = {
   className?: string;
 };
 
+/**
+ * Reusable button that renders a single PNG icon.
+ * Shared hover/active feedback lives in the `.icon-btn` CSS rule
+ * (defined in app/styles/global.css).
+ */
 export function IconButton({
   icon,
   alt = '',
