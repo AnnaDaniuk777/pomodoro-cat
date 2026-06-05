@@ -1,6 +1,31 @@
 :root {
-  --screen-w: calc(229px * var(--scale));
-  --screen-h: calc(248px * var(--scale));
+  /* ── Размеры экрана ── */
+  --screen-scale: 1.6;
+  --screen-w: calc(229px * var(--screen-scale));
+  --screen-h: calc(248px * var(--screen-scale));
+
+  /* ── Titlebar (minimize / close) ── */
+  --titlebar-scale: 1.5;
+
+  /* ── Cat sprite ── */
+  /* Note: cat pixel size is also controlled by CAT_SCALE in shared/config.ts */
+
+  /* ── Cat stage (bowl, ball) ── */
+  --bowl-scale: 2;
+  --ball-scale: 2.4;
+
+  /* ── Timer dial ── */
+  --timer-w: 145px;
+  --timer-h: 57px;
+  --timer-font-size: 25px;
+
+  /* ── Timer side buttons (start / reset) ── */
+  --timer-btn-size: 40px;
+
+  /* ── Bottom nav buttons ── */
+  --nav-btn-size: 52px;
+  --nav-foliage-w: 53px;
+
   --text: #d8def0;
   --font-ui: 'Press Start 2P', monospace;
   --font-timer: 'Arcade Jeu', 'Press Start 2P', monospace;
@@ -63,6 +88,7 @@ img {
 }
 
 .icon-btn {
+  position: relative;
   background: none;
   border: 0;
   outline: 0;
@@ -71,6 +97,7 @@ img {
   cursor: pointer;
   -webkit-app-region: no-drag;
   transition: transform 0.1s ease, filter 0.1s ease;
+  z-index: 3;
 }
 
 .icon-btn:focus,
@@ -97,55 +124,73 @@ img {
 }
 
 .titlebar__btn img {
-  width: calc(19px * var(--scale));
-  height: calc(14px * var(--scale));
+  width: calc(19px * var(--titlebar-scale));
+  height: calc(14px * var(--titlebar-scale));
 }
 
 .cat-stage {
-  position: absolute;
-  inset: 0;
+  display: block;
+  position: relative;
   z-index: 1;
+  width: 100%;
+  height: 100%;
 }
 
 .cat-stage > div {
+  display: block;
   position: absolute;
-  inset: 0;
-  pointer-events: none;
+  left: 28px;
+  top: 61px;
 }
 
 .cat-stage__bowl {
   position: absolute;
-  left: 50px;
-  top: 160px;
-  z-index: -1;
+  left: 42px;
+  top: 93px;
+  z-index: 2;
 }
 
 .cat-stage__bowl img {
-  width: calc(23px * var(--scale));
-  height: calc(11px * var(--scale));
+  width: calc(23px * var(--bowl-scale));
+  height: calc(11px * var(--bowl-scale));
 }
 
 .cat-stage__ball {
   position: absolute;
-  right: 50px;
-  top: 160px;
+  right: 25px;
+  top: 88px;
   z-index: 2;
+  cursor: pointer;
 }
 
 .cat-stage__ball img {
-  width: calc(15px * var(--scale));
-  height: calc(12px * var(--scale));
+  width: calc(15px * var(--ball-scale));
+  height: calc(12px * var(--ball-scale));
+}
+
+/* ── Timer row (dial + side buttons) ── */
+.timer-row {
+  position: absolute;
+  top: 258px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 3;
+}
+
+.timer-row__side-btn img {
+  width: var(--timer-btn-size);
+  height: var(--timer-btn-size);
 }
 
 .timer {
-  position: absolute;
-  top: 185px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(108px * var(--scale));
-  height: calc(40px * var(--scale));
-  z-index: 3;
+  position: relative;
+  width: var(--timer-w);
+  height: var(--timer-h);
   pointer-events: none;
+  flex-shrink: 0;
 }
 
 .timer__bg {
@@ -162,50 +207,57 @@ img {
   align-items: center;
   justify-content: center;
   font-family: var(--font-timer);
-  font-size: calc(20px * var(--scale));
+  font-size: var(--timer-font-size);
   letter-spacing: 2px;
   color: var(--text);
-  padding-bottom: 4px;
+  padding-left: 8px;
 }
 
-.timer-controls {
-  position: absolute;
-  bottom: 98px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 80px;
-  z-index: 3;
-}
-
-.timer-controls__btn img {
-  width: calc(28px * var(--scale));
-  height: calc(29px * var(--scale));
-}
-
+/* ── Bottom nav ── */
 .bottom-nav {
   position: absolute;
-  bottom: 32px;
-  left: 24px;
-  right: 24px;
+  bottom: 27px;
+  left: 70px;
+  gap: 30px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   z-index: 3;
 }
 
-.bottom-nav__todo img {
-  width: calc(51px * var(--scale));
-  height: calc(48px * var(--scale));
+.bottom-nav__item {
+  position: relative;
+  align-items: center;
+  gap: 2px;
 }
 
-.bottom-nav__music img {
-  width: calc(61px * var(--scale));
-  height: calc(49px * var(--scale));
-  margin-left: 3px;
+.bottom-nav__btn img {
+  width: var(--nav-btn-size);
+  height: var(--nav-btn-size);
 }
 
-.bottom-nav__settings img {
-  width: calc(48px * var(--scale));
-  height: calc(46px * var(--scale));
+.bottom-nav__foliage {
+  width: var(--nav-foliage-w);
+  height: auto;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bottom-nav__foliage--one {
+  left: 1px;
+  top: 3px;
+}
+
+.bottom-nav__foliage--two {
+  left: -7px;
+  top: 6px;
+  width: 60px;
+}
+
+.bottom-nav__foliage--three {
+  left: 2px;
+  top: 4px;
+  width: 50px;
 }
