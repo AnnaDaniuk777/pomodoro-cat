@@ -245,18 +245,18 @@ img {
   left: 0;
 }
 
-.bottom-nav__foliage--one {
+.bottom-nav__foliage--todo {
   left: 1px;
   top: 3px;
 }
 
-.bottom-nav__foliage--two {
+.bottom-nav__foliage--music {
   left: -7px;
   top: 6px;
   width: 60px;
 }
 
-.bottom-nav__foliage--three {
+.bottom-nav__foliage--settings {
   left: 2px;
   top: 4px;
   width: 50px;

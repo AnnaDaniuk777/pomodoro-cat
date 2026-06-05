@@ -11,15 +11,15 @@ export function BottomNav() {
     <nav className="bottom-nav">
       <div className="bottom-nav__item">
         <IconButton icon={todoBtn} alt="Tasks" className="bottom-nav__btn" />
-        <img className="bottom-nav__foliage bottom-nav__foliage--one" src={todoFoliage} alt="" />
+        <img className="bottom-nav__foliage bottom-nav__foliage--todo" src={todoFoliage} alt="" />
       </div>
       <div className="bottom-nav__item">
         <IconButton icon={musicBtn} alt="Music" className="bottom-nav__btn" />
-        <img className="bottom-nav__foliage bottom-nav__foliage--two" src={musicFoliage} alt="" />
+        <img className="bottom-nav__foliage bottom-nav__foliage--music" src={musicFoliage} alt="" />
       </div>
       <div className="bottom-nav__item">
         <IconButton icon={settingsBtn} alt="Settings" className="bottom-nav__btn" />
-        <img className="bottom-nav__foliage bottom-nav__foliage--three" src={settingsFoliage} alt="" />
+        <img className="bottom-nav__foliage bottom-nav__foliage--settings" src={settingsFoliage} alt="" />
       </div>
     </nav>
   );
