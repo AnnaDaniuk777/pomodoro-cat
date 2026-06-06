@@ -15,6 +15,7 @@ function createWindow() {
     maximizable: false,
     fullscreenable: false,
     frame: false,
+    icon: path.join(__dirname, '../../build/app-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
