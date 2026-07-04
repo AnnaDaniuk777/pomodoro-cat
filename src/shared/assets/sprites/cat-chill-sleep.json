@@ -1,0 +1,114 @@
+{ "frames": {
+   "КОТ чилл старт 0.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 1.aseprite": {
+    "frame": { "x": 136, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 2.aseprite": {
+    "frame": { "x": 272, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 3.aseprite": {
+    "frame": { "x": 408, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 4.aseprite": {
+    "frame": { "x": 544, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 5.aseprite": {
+    "frame": { "x": 680, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 6.aseprite": {
+    "frame": { "x": 816, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 7.aseprite": {
+    "frame": { "x": 952, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 8.aseprite": {
+    "frame": { "x": 1088, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 9.aseprite": {
+    "frame": { "x": 1224, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 10.aseprite": {
+    "frame": { "x": 1360, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   },
+   "КОТ чилл старт 11.aseprite": {
+    "frame": { "x": 1496, "y": 0, "w": 136, "h": 77 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 136, "h": 77 },
+    "sourceSize": { "w": 136, "h": 77 },
+    "duration": 300
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.17.2-x64",
+  "image": "cat-chill-sleep.png",
+  "format": "RGBA8888",
+  "size": { "w": 1632, "h": 77 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "cat sleep", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

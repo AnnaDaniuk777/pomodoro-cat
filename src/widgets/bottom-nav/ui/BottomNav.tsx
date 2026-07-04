@@ -6,7 +6,11 @@ import todoFoliage from '@/shared/assets/elements/todo-foliage.png';
 import musicFoliage from '@/shared/assets/elements/music-foliage.png';
 import settingsFoliage from '@/shared/assets/elements/settings-foliage.png';
 
-export function BottomNav() {
+type BottomNavProps = {
+  onSettingsClick?: () => void;
+};
+
+export function BottomNav({ onSettingsClick }: BottomNavProps) {
   return (
     <nav className="bottom-nav">
       <div className="bottom-nav__item">
@@ -18,7 +22,12 @@ export function BottomNav() {
         <img className="bottom-nav__foliage bottom-nav__foliage--music" src={musicFoliage} alt="" />
       </div>
       <div className="bottom-nav__item">
-        <IconButton icon={settingsBtn} alt="Settings" className="bottom-nav__btn" />
+        <IconButton
+          icon={settingsBtn}
+          alt="Settings"
+          className="bottom-nav__btn"
+          onClick={onSettingsClick}
+        />
         <img className="bottom-nav__foliage bottom-nav__foliage--settings" src={settingsFoliage} alt="" />
       </div>
     </nav>

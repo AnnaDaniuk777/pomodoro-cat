@@ -1,0 +1,106 @@
+{ "frames": {
+   "КОТ играет 0.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 1.aseprite": {
+    "frame": { "x": 126, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 2.aseprite": {
+    "frame": { "x": 252, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 3.aseprite": {
+    "frame": { "x": 378, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 4.aseprite": {
+    "frame": { "x": 504, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 5.aseprite": {
+    "frame": { "x": 630, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 6.aseprite": {
+    "frame": { "x": 756, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 7.aseprite": {
+    "frame": { "x": 882, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 8.aseprite": {
+    "frame": { "x": 1008, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   },
+   "КОТ играет 9.aseprite": {
+    "frame": { "x": 1134, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 80
+   },
+   "КОТ играет 10.aseprite": {
+    "frame": { "x": 1260, "y": 0, "w": 126, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 126, "h": 108 },
+    "sourceSize": { "w": 126, "h": 108 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.17.2-x64",
+  "image": "cat-play-start.png",
+  "format": "RGBA8888",
+  "size": { "w": 1386, "h": 108 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "play", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

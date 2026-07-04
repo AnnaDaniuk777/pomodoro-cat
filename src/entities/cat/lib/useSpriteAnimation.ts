@@ -5,7 +5,7 @@ export type SpriteFrame = {
   duration: number;
 };
 
-type AsepriteJSON = {
+export type AsepriteJSON = {
   frames: Record<string, SpriteFrame>;
   meta: { size: { w: number; h: number } };
 };

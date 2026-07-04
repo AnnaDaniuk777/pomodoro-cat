@@ -1,26 +1,134 @@
-import { useMemo } from 'react';
-import spriteSheet from '@/shared/assets/sprites/cat.png';
-import spriteData from '@/shared/assets/sprites/cat.json';
+import { useCallback, useMemo, useState } from 'react';
+import idleSheet from '@/shared/assets/sprites/cat.png';
+import idleData from '@/shared/assets/sprites/cat.json';
+import playStartSheet from '@/shared/assets/sprites/cat-play-start.png';
+import playStartData from '@/shared/assets/sprites/cat-play-start.json';
+import playCycleSheet from '@/shared/assets/sprites/cat-play-cycle.png';
+import playCycleData from '@/shared/assets/sprites/cat-play-cycle.json';
+import chillStartSheet from '@/shared/assets/sprites/cat-chill-start.png';
+import chillStartData from '@/shared/assets/sprites/cat-chill-start.json';
+import chillSleepSheet from '@/shared/assets/sprites/cat-chill-sleep.png';
+import chillSleepData from '@/shared/assets/sprites/cat-chill-sleep.json';
 import { CAT_SCALE } from '@/shared/config';
-import { extractFrames, useSpriteAnimation } from '../lib/useSpriteAnimation';
+import {
+  extractFrames,
+  useSpriteAnimation,
+  type AsepriteJSON,
+} from '../lib/useSpriteAnimation';
 
-export function Cat() {
-  const frames = useMemo(() => extractFrames(spriteData), []);
-  const current = useSpriteAnimation({ frames, loop: true });
+export type CatAnimationName = 'idle' | 'play' | 'chill';
+
+type Clip = {
+  sheet: string;
+  data: AsepriteJSON;
+  loop: boolean;
+  dx: number;
+  dy: number;
+  scale?: number;
+  durationScale?: number;
+  range?: [number, number];
+  smooth?: boolean;
+};
+
+const CLIPS: Record<CatAnimationName, Clip[]> = {
+  idle: [{ sheet: idleSheet, data: idleData, loop: true, dx: 0, dy: 0 }],
+  play: [
+    {
+      sheet: playStartSheet,
+      data: playStartData,
+      loop: false,
+      dx: 12,
+      dy: 7,
+      durationScale: 1.7,
+    },
+    {
+      sheet: playCycleSheet,
+      data: playCycleData,
+      loop: false,
+      dx: 0,
+      dy: 7,
+      durationScale: 3,
+      range: [0, 2],
+    },
+    {
+      sheet: playCycleSheet,
+      data: playCycleData,
+      loop: true,
+      dx: 0,
+      dy: 7,
+    },
+  ],
+  chill: [
+    {
+      sheet: chillStartSheet,
+      data: chillStartData,
+      loop: false,
+      dx: 4,
+      dy: 5,
+    },
+    {
+      sheet: chillSleepSheet,
+      data: chillSleepData,
+      loop: true,
+      dx: 2,
+      dy: -18,
+      smooth: true,
+    },
+  ],
+};
+
+type CatProps = {
+  animation?: CatAnimationName;
+};
+
+export function Cat({ animation = 'idle' }: CatProps) {
+  const [clipIndex, setClipIndex] = useState(0);
+  const [prevAnimation, setPrevAnimation] = useState(animation);
+
+  if (prevAnimation !== animation) {
+    setPrevAnimation(animation);
+    setClipIndex(0);
+  }
+
+  const clips = CLIPS[animation];
+  const clip = clips[Math.min(clipIndex, clips.length - 1)];
+
+  const frames = useMemo(() => {
+    const base = extractFrames(clip.data, clip.range);
+    const scale = clip.durationScale ?? 1;
+    if (scale === 1) return base;
+    return base.map((frame) => ({
+      ...frame,
+      duration: frame.duration * scale,
+    }));
+  }, [clip]);
+
+  const advanceClip = useCallback(() => {
+    setClipIndex((index) => Math.min(index + 1, clips.length - 1));
+  }, [clips.length]);
+
+  const current = useSpriteAnimation({
+    frames,
+    loop: clip.loop,
+    onComplete: clip.loop ? undefined : advanceClip,
+  });
 
   const { x, y, w, h } = current.frame;
-  const { w: sheetW, h: sheetH } = spriteData.meta.size;
+  const { w: sheetW, h: sheetH } = clip.data.meta.size;
+  const renderScale = CAT_SCALE * (clip.scale ?? 1);
 
   return (
     <div
       style={{
-        width: w * CAT_SCALE,
-        height: h * CAT_SCALE,
-        backgroundImage: `url(${spriteSheet})`,
-        backgroundPosition: `-${x * CAT_SCALE}px -${y * CAT_SCALE}px`,
-        backgroundSize: `${sheetW * CAT_SCALE}px ${sheetH * CAT_SCALE}px`,
+        width: w * renderScale,
+        height: h * renderScale,
+        backgroundImage: `url(${clip.sheet})`,
+        backgroundPosition: `-${x * renderScale}px -${y * renderScale}px`,
+        backgroundSize: `${sheetW * renderScale}px ${sheetH * renderScale}px`,
         backgroundRepeat: 'no-repeat',
         imageRendering: 'pixelated',
+        transform: `translate(${clip.dx * CAT_SCALE}px, ${clip.dy * CAT_SCALE}px)`,
+        transition: clip.smooth ? 'transform 0.7s ease-in-out' : undefined,
       }}
     />
   );
