@@ -1,8 +1,23 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MainScreen } from '@/pages/main';
+import { PlayerScreen } from '@/pages/player';
+import { TodoScreen } from '@/pages/todo';
+import { playerStore, usePlayer } from '@/entities/player';
 import { timerStore, useTimer } from '@/entities/timer';
 import { electronApi } from '@/shared/lib/electron-api';
 import { renderTrayIcon } from '@/shared/lib/tray-icon';
+import playerScreenBg from '@/shared/assets/player/player-screen-background.png';
+import playerHeaderImg from '@/shared/assets/player/player-header.png';
+import todoHeaderImg from '@/shared/assets/todo/header.png';
+
+function usePreloadAssets() {
+  useEffect(() => {
+    [playerScreenBg, playerHeaderImg, todoHeaderImg].forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+}
 
 function useTrayIcon() {
   const { mode, status, timeLeft, workDuration, breakTotal } = useTimer();
@@ -62,10 +77,68 @@ function useWidgetSync() {
   }, [mode, status, timeLeft, workDuration, breakTotal]);
 }
 
+function usePlayerWidgetSync() {
+  const { tracks, isPlaying, currentTime, duration, volume } = usePlayer();
+
+  useEffect(() => {
+    electronApi.sendPlayerState({
+      hasTrack: tracks.length > 0,
+      isPlaying,
+      progress: duration > 0 ? currentTime / duration : 0,
+      volume,
+    });
+  }, [tracks.length, isPlaying, currentTime, duration, volume]);
+
+  useEffect(() => {
+    electronApi.onAddPaths((paths) => {
+      void (async () => {
+        for (const filePath of paths) {
+          const data = await electronApi.readAudioFile(filePath);
+          if (!data) continue;
+          const name =
+            filePath.split(/[\\/]/).pop()?.replace(/\.[^.]+$/, '') ?? filePath;
+          playerStore.addTrackFromData(name, data);
+        }
+      })();
+    });
+  }, []);
+
+  useEffect(() => {
+    electronApi.onPlayerCmd((cmd, value) => {
+      if (cmd === 'toggle') playerStore.toggle();
+      else if (cmd === 'next') playerStore.next();
+      else if (cmd === 'prev') playerStore.prev();
+      else if (cmd === 'volume' && typeof value === 'number') {
+        playerStore.setVolume(value);
+      } else if (cmd === 'seek' && typeof value === 'number') {
+        const { duration: total } = playerStore.getState();
+        if (total > 0) playerStore.seek(value * total);
+      }
+    });
+  }, []);
+}
+
+type Screen = 'main' | 'player' | 'todo';
+
 export function App() {
+  const [screen, setScreen] = useState<Screen>('main');
   useTrayIcon();
   useAlwaysOnTop();
   useTrayToggle();
   useWidgetSync();
-  return <MainScreen />;
+  usePlayerWidgetSync();
+  usePreloadAssets();
+
+  if (screen === 'player') {
+    return <PlayerScreen onBack={() => setScreen('main')} />;
+  }
+  if (screen === 'todo') {
+    return <TodoScreen onBack={() => setScreen('main')} />;
+  }
+  return (
+    <MainScreen
+      onOpenPlayer={() => setScreen('player')}
+      onOpenTodo={() => setScreen('todo')}
+    />
+  );
 }

@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { playBreakEndChime, playWorkEndChime } from '@/shared/lib/audio';
+import { t } from '@/shared/lib/i18n';
 
 export type TimerMode = 'work' | 'break';
 export type TimerStatus = 'idle' | 'running' | 'paused';
@@ -120,9 +121,18 @@ function stopTicking() {
   }
 }
 
+let deadline = 0;
+
+function remainingSeconds(): number {
+  return Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+}
+
 function tick() {
-  if (state.timeLeft > 1) {
-    setState({ timeLeft: state.timeLeft - 1 });
+  const remaining = remainingSeconds();
+  if (remaining > 0) {
+    if (remaining !== state.timeLeft) {
+      setState({ timeLeft: remaining });
+    }
     return;
   }
   if (state.mode === 'work') {
@@ -130,7 +140,8 @@ function tick() {
     const sessions = state.completedSessions + 1;
     const isLongBreak = sessions % state.sessionsBeforeLongBreak === 0;
     const total = isLongBreak ? state.longBreakDuration : state.breakDuration;
-    notify(isLongBreak ? 'Session done — time for a long break!' : 'Session done — break time!');
+    notify(isLongBreak ? t('workEndLong') : t('workEnd'));
+    deadline = Date.now() + total * 1000;
     setState({
       mode: 'break',
       timeLeft: total,
@@ -142,10 +153,11 @@ function tick() {
   } else {
     if (state.soundEnabled) playBreakEndChime(state.volume);
     if (state.autoStartWork) {
-      notify('Break over — back to work!');
+      notify(t('breakEndAuto'));
+      deadline = Date.now() + state.workDuration * 1000;
       setState({ mode: 'work', timeLeft: state.workDuration });
     } else {
-      notify('Break over!');
+      notify(t('breakEnd'));
       stopTicking();
       setState({ mode: 'work', status: 'idle', timeLeft: state.workDuration });
     }
@@ -160,12 +172,13 @@ function startTicking() {
 
 export const timerStore = {
   start() {
+    deadline = Date.now() + state.timeLeft * 1000;
     startTicking();
     setState({ status: 'running' });
   },
   pause() {
     stopTicking();
-    setState({ status: 'paused' });
+    setState({ status: 'paused', timeLeft: remainingSeconds() });
   },
   reset() {
     stopTicking();

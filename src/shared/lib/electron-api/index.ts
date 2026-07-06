@@ -11,6 +11,15 @@ export type WidgetTimerState = {
   progress: number;
 };
 
+export type WidgetPlayerState = {
+  hasTrack: boolean;
+  isPlaying: boolean;
+  progress: number;
+  volume: number;
+};
+
+export type PlayerCommand = 'toggle' | 'next' | 'prev' | 'volume' | 'seek';
+
 declare global {
   interface Window {
     electronAPI?: {
@@ -23,11 +32,25 @@ declare global {
       onTimerState: (callback: (state: WidgetTimerState) => void) => void;
       widgetToggle: () => void;
       widgetRestore: () => void;
+      widgetSetPosition: (x: number, y: number) => void;
+      sendPlayerState: (state: WidgetPlayerState) => void;
+      onPlayerState: (callback: (state: WidgetPlayerState) => void) => void;
+      playerCmd: (cmd: PlayerCommand, value?: number) => void;
+      onPlayerCmd: (
+        callback: (cmd: PlayerCommand, value?: number) => void,
+      ) => void;
+      playerWidgetHide: () => void;
+      playerWidgetSetPosition: (x: number, y: number) => void;
+      openAddFilesDialog: () => void;
+      onAddPaths: (callback: (paths: string[]) => void) => void;
+      readAudioFile: (filePath: string) => Promise<Uint8Array | null>;
     };
   }
 }
 
 let trayToggleRegistered = false;
+let playerCmdRegistered = false;
+let addPathsRegistered = false;
 
 export const electronApi = {
   minimize: () => window.electronAPI?.minimize(),
@@ -46,4 +69,28 @@ export const electronApi = {
     window.electronAPI?.onTimerState(callback),
   widgetToggle: () => window.electronAPI?.widgetToggle(),
   widgetRestore: () => window.electronAPI?.widgetRestore(),
+  widgetSetPosition: (x: number, y: number) =>
+    window.electronAPI?.widgetSetPosition(x, y),
+  sendPlayerState: (state: WidgetPlayerState) =>
+    window.electronAPI?.sendPlayerState(state),
+  onPlayerState: (callback: (state: WidgetPlayerState) => void) =>
+    window.electronAPI?.onPlayerState(callback),
+  playerCmd: (cmd: PlayerCommand, value?: number) =>
+    window.electronAPI?.playerCmd(cmd, value),
+  onPlayerCmd: (callback: (cmd: PlayerCommand, value?: number) => void) => {
+    if (playerCmdRegistered) return;
+    playerCmdRegistered = true;
+    window.electronAPI?.onPlayerCmd(callback);
+  },
+  playerWidgetHide: () => window.electronAPI?.playerWidgetHide(),
+  playerWidgetSetPosition: (x: number, y: number) =>
+    window.electronAPI?.playerWidgetSetPosition(x, y),
+  openAddFilesDialog: () => window.electronAPI?.openAddFilesDialog(),
+  onAddPaths: (callback: (paths: string[]) => void) => {
+    if (addPathsRegistered) return;
+    addPathsRegistered = true;
+    window.electronAPI?.onAddPaths(callback);
+  },
+  readAudioFile: (filePath: string) =>
+    window.electronAPI?.readAudioFile(filePath) ?? Promise.resolve(null),
 };
