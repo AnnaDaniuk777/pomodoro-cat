@@ -1,4 +1,6 @@
+import { playerStore, usePlayer } from '@/entities/player';
 import { timerStore, useTimer } from '@/entities/timer';
+import { i18n, t, useLang } from '@/shared/lib/i18n';
 import { NumberStepper } from '@/shared/ui/NumberStepper';
 
 type SettingsSheetProps = {
@@ -17,6 +19,8 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
     notificationsEnabled,
     alwaysOnTop,
   } = useTimer();
+  const { repeatPlaylist } = usePlayer();
+  const lang = useLang();
 
   return (
     <div className="settings-overlay">
@@ -24,10 +28,10 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
         <button type="button" className="settings-sheet__close" onClick={onClose}>
           ×
         </button>
-        <h2 className="settings-sheet__title">Settings</h2>
+        <h2 className="settings-sheet__title">{t('settingsTitle')}</h2>
         <div className="settings-sheet__scroll">
           <div className="settings-sheet__row">
-            <span>Work, min</span>
+            <span>{t('workMin')}</span>
             <NumberStepper
               value={Math.round(workDuration / 60)}
               min={1}
@@ -36,7 +40,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </div>
           <div className="settings-sheet__row">
-            <span>Break, min</span>
+            <span>{t('breakMin')}</span>
             <NumberStepper
               value={Math.round(breakDuration / 60)}
               min={1}
@@ -45,7 +49,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </div>
           <div className="settings-sheet__row">
-            <span>Long break, min</span>
+            <span>{t('longBreak')}</span>
             <NumberStepper
               value={Math.round(longBreakDuration / 60)}
               min={1}
@@ -54,7 +58,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </div>
           <div className="settings-sheet__row">
-            <span>Sessions</span>
+            <span>{t('sessions')}</span>
             <NumberStepper
               value={sessionsBeforeLongBreak}
               min={1}
@@ -63,7 +67,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </div>
           <label className="settings-sheet__row">
-            <span>Auto next</span>
+            <span>{t('autoNext')}</span>
             <input
               type="checkbox"
               checked={autoStartWork}
@@ -71,7 +75,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </label>
           <label className="settings-sheet__row">
-            <span>Sound</span>
+            <span>{t('sound')}</span>
             <input
               type="checkbox"
               checked={soundEnabled}
@@ -79,7 +83,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </label>
           <label className="settings-sheet__row">
-            <span>Volume</span>
+            <span>{t('volume')}</span>
             <input
               type="range"
               min={0}
@@ -89,7 +93,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </label>
           <label className="settings-sheet__row">
-            <span>Notify</span>
+            <span>{t('notify')}</span>
             <input
               type="checkbox"
               checked={notificationsEnabled}
@@ -97,13 +101,31 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             />
           </label>
           <label className="settings-sheet__row">
-            <span>On top</span>
+            <span>{t('onTop')}</span>
             <input
               type="checkbox"
               checked={alwaysOnTop}
               onChange={() => timerStore.toggleAlwaysOnTop()}
             />
           </label>
+          <label className="settings-sheet__row">
+            <span>{t('repeat')}</span>
+            <input
+              type="checkbox"
+              checked={repeatPlaylist}
+              onChange={() => playerStore.toggleRepeat()}
+            />
+          </label>
+          <div className="settings-sheet__row">
+            <span>{t('language')}</span>
+            <button
+              type="button"
+              className="settings-sheet__lang"
+              onClick={() => i18n.setLang(lang === 'en' ? 'ru' : 'en')}
+            >
+              {lang === 'en' ? 'EN' : 'RU'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

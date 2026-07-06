@@ -6,7 +6,12 @@ import { BottomNav } from '@/widgets/bottom-nav';
 import { SettingsSheet } from '@/widgets/settings-sheet';
 import mainBg from '@/shared/assets/elements/main-screen-background.png';
 
-export function MainScreen() {
+type MainScreenProps = {
+  onOpenPlayer?: () => void;
+  onOpenTodo?: () => void;
+};
+
+export function MainScreen({ onOpenPlayer, onOpenTodo }: MainScreenProps) {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
@@ -15,7 +20,11 @@ export function MainScreen() {
       <Titlebar />
       <CatStage />
       <TimerPanel />
-      <BottomNav onSettingsClick={() => setSettingsOpen(true)} />
+      <BottomNav
+        onSettingsClick={() => setSettingsOpen(true)}
+        onMusicClick={onOpenPlayer}
+        onTodoClick={onOpenTodo}
+      />
       {settingsOpen && <SettingsSheet onClose={() => setSettingsOpen(false)} />}
     </div>
   );

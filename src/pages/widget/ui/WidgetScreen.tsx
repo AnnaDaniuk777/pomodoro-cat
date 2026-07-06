@@ -41,7 +41,34 @@ export function WidgetScreen() {
   return (
     <div
       className="widget"
-      onClick={() => electronApi.widgetToggle()}
+      onMouseDown={(e) => {
+        if (e.button !== 0) return;
+        const grabX = e.screenX - window.screenX;
+        const grabY = e.screenY - window.screenY;
+        const startX = e.screenX;
+        const startY = e.screenY;
+        let moved = false;
+        const move = (ev: MouseEvent) => {
+          if (
+            !moved &&
+            Math.hypot(ev.screenX - startX, ev.screenY - startY) > 4
+          ) {
+            moved = true;
+          }
+          if (moved) {
+            electronApi.widgetSetPosition(ev.screenX - grabX, ev.screenY - grabY);
+          }
+        };
+        const up = () => {
+          window.removeEventListener('mousemove', move);
+          window.removeEventListener('mouseup', up);
+          if (!moved) {
+            electronApi.widgetToggle();
+          }
+        };
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', up);
+      }}
       onContextMenu={(e) => {
         e.preventDefault();
         electronApi.widgetRestore();
