@@ -609,7 +609,7 @@ img {
   height: calc(20px * var(--screen-scale));
   box-sizing: border-box;
   border: 8px solid transparent;
-  border-image: url('../../shared/assets/player/track-row-bg.png') 5 fill / 8px stretch;
+  border-image: url('../../shared/assets/player/track-row-bg-dark.png') 3 fill / 8px stretch;
   image-rendering: pixelated;
   display: flex;
   align-items: center;
@@ -629,7 +629,7 @@ img {
 }
 
 .player__track-name--marquee span {
-  animation: track-marquee var(--marquee-duration, 4s) linear infinite alternate;
+  animation: track-marquee var(--marquee-duration, 4s) ease-in-out infinite alternate;
 }
 
 @keyframes track-marquee {
@@ -726,7 +726,7 @@ img {
   min-height: calc(20px * var(--screen-scale));
   box-sizing: border-box;
   border: 8px solid transparent;
-  border-image: url('../../shared/assets/player/track-row-bg.png') 5 fill / 8px stretch;
+  border-image: url('../../shared/assets/player/track-row-bg-dark.png') 3 fill / 8px stretch;
   image-rendering: pixelated;
   display: flex;
   align-items: center;
