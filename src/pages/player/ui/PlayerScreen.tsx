@@ -25,7 +25,7 @@ import timelineFilled from '@/shared/assets/player/timeline-filled.png';
 import pawThumb from '@/shared/assets/player/paw-thumb.png';
 import trackPlayBtn from '@/shared/assets/player/track-play-button.png';
 import trackPauseBtn from '@/shared/assets/player/track-pause-button.png';
-import trackDeleteBtn from '@/shared/assets/player/track-delete-button.png';
+import trackDeleteBtn from '@/shared/assets/todo/trash-light.png';
 
 const EQ_SCALE = 1.6;
 
@@ -75,12 +75,29 @@ function TrackName({ name, onClick }: { name: string; onClick: () => void }) {
         const container = e.currentTarget;
         const span = spanRef.current;
         if (!span) return;
-        const overflow = span.scrollWidth - container.clientWidth + 8;
-        if (overflow > 0) {
-          setMarquee({ shift: overflow, duration: overflow / 30 });
+        const overflow = span.scrollWidth - container.clientWidth;
+        if (overflow > 2) {
+          const shift = overflow + 8;
+          setMarquee({ shift, duration: Math.max(shift / 30, 1) });
         }
       }}
-      onMouseLeave={() => setMarquee(null)}
+      onMouseLeave={() => {
+        const span = spanRef.current;
+        if (span && marquee) {
+          const current = getComputedStyle(span).transform;
+          span.style.transition = 'none';
+          span.style.transform = current === 'none' ? 'translateX(0)' : current;
+          requestAnimationFrame(() => {
+            span.style.transition = 'transform 0.5s ease-out';
+            span.style.transform = 'translateX(0)';
+          });
+          window.setTimeout(() => {
+            span.style.transition = '';
+            span.style.transform = '';
+          }, 550);
+        }
+        setMarquee(null);
+      }}
     >
       <span ref={spanRef}>{name}</span>
     </div>

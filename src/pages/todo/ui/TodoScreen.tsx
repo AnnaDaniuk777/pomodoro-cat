@@ -8,7 +8,7 @@ import todoHeader from '@/shared/assets/todo/header.png';
 import checkIcon from '@/shared/assets/todo/check.png';
 import pawIcon from '@/shared/assets/todo/paw-checkbox.png';
 import backBtn from '@/shared/assets/player/back-button.png';
-import trashBtn from '@/shared/assets/player/track-delete-button.png';
+import trashBtn from '@/shared/assets/todo/trash-light.png';
 
 type TodoScreenProps = {
   onBack: () => void;
