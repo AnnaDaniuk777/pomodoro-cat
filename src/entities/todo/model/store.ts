@@ -37,9 +37,7 @@ function setState(tasks: TodoTask[]) {
   listeners.forEach((listener) => listener());
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  } catch {
-    /* storage unavailable */
-  }
+  } catch {}
 }
 
 function sortTasks(tasks: TodoTask[]): TodoTask[] {

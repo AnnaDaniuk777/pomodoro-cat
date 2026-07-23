@@ -1,10 +1,3 @@
-/**
- * Thin wrapper around `window.electronAPI` exposed by `electron/preload.ts`.
- *
- * In the browser (npm run dev:web) `window.electronAPI` is `undefined`, so
- * each method is a no-op. In Electron it dispatches the right IPC event.
- */
-
 export type WidgetTimerState = {
   mode: 'work' | 'break';
   status: 'idle' | 'running' | 'paused';

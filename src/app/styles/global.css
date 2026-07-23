@@ -1,28 +1,19 @@
 :root {
-  /* ── Размеры экрана ── */
   --screen-scale: 1.6;
   --screen-w: calc(229px * var(--screen-scale));
   --screen-h: calc(248px * var(--screen-scale));
 
-  /* ── Titlebar (minimize / close) ── */
   --titlebar-scale: 1.5;
 
-  /* ── Cat sprite ── */
-  /* Note: cat pixel size is also controlled by CAT_SCALE in shared/config.ts */
-
-  /* ── Cat stage (bowl, ball) ── */
   --bowl-scale: 2;
   --ball-scale: 2.4;
 
-  /* ── Timer dial ── */
   --timer-w: 145px;
   --timer-h: 57px;
   --timer-font-size: 25px;
 
-  /* ── Timer side buttons (start / reset) ── */
   --timer-btn-size: 40px;
 
-  /* ── Bottom nav buttons ── */
   --nav-btn-size: 52px;
   --nav-foliage-w: 53px;
 
@@ -182,7 +173,6 @@ img {
   height: calc(12px * var(--ball-scale));
 }
 
-/* ── Timer row (dial + side buttons) ── */
 .timer-row {
   position: absolute;
   top: 258px;
@@ -227,7 +217,6 @@ img {
   padding-left: 8px;
 }
 
-/* ── Bottom nav ── */
 .bottom-nav {
   position: absolute;
   bottom: 27px;
@@ -276,7 +265,6 @@ img {
   width: 50px;
 }
 
-/* ── Settings sheet ── */
 .settings-overlay {
   position: absolute;
   inset: 0;
@@ -354,7 +342,6 @@ img {
   background: #2b2b45;
 }
 
-/* ── Music player ── */
 .player__header {
   position: absolute;
   top: calc(21px * var(--screen-scale));
@@ -647,7 +634,6 @@ img {
   filter: brightness(1.12);
 }
 
-/* ── Todo screen ── */
 .todo__list {
   position: absolute;
   top: 88px;
@@ -807,7 +793,6 @@ img {
   color: var(--text);
 }
 
-/* ── Mini player widget ── */
 .pwidget {
   position: relative;
   width: 314px;
@@ -1007,7 +992,6 @@ img {
 }
 
 
-/* ── Floating widget ── */
 .widget {
   position: relative;
   width: 84px;

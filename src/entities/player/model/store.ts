@@ -229,9 +229,7 @@ export const playerStore = {
     setState({ repeatPlaylist: next });
     try {
       localStorage.setItem('catodoro-repeat', next ? 'on' : 'off');
-    } catch {
-      /* storage unavailable */
-    }
+    } catch {}
   },
   getState: () => state,
   subscribe(listener: () => void) {

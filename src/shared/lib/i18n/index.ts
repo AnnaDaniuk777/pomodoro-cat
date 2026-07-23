@@ -19,9 +19,9 @@ const translations = {
     newTask: 'NEW TASK...',
     left: 'LEFT',
     clearDone: 'CLEAR DONE',
-    workEnd: 'Session done — break time!',
-    workEndLong: 'Session done — time for a long break!',
-    breakEndAuto: 'Break over — back to work!',
+    workEnd: 'Session done, break time!',
+    workEndLong: 'Session done, time for a long break!',
+    breakEndAuto: 'Break over, back to work!',
     breakEnd: 'Break over!',
   },
   ru: {
@@ -40,9 +40,9 @@ const translations = {
     newTask: 'НОВАЯ ЗАДАЧА...',
     left: 'ОСТАЛОСЬ',
     clearDone: 'УБРАТЬ СДЕЛАННЫЕ',
-    workEnd: 'Сессия окончена — перерыв!',
-    workEndLong: 'Сессия окончена — время долгого перерыва!',
-    breakEndAuto: 'Перерыв окончен — за работу!',
+    workEnd: 'Сессия окончена, перерыв!',
+    workEndLong: 'Сессия окончена, время долгого перерыва!',
+    breakEndAuto: 'Перерыв окончен, за работу!',
     breakEnd: 'Перерыв окончен!',
   },
 } as const;
@@ -70,9 +70,7 @@ export const i18n = {
     listeners.forEach((listener) => listener());
     try {
       localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      /* storage unavailable */
-    }
+    } catch {}
   },
   subscribe(listener: () => void) {
     listeners.add(listener);
