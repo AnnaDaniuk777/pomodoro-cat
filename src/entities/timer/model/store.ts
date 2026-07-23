@@ -100,18 +100,14 @@ function persist() {
         todayCount: state.todayCount,
       }),
     );
-  } catch {
-    /* storage unavailable */
-  }
+  } catch {}
 }
 
 function notify(body: string) {
   if (!state.notificationsEnabled) return;
   try {
     new Notification('Catodoro', { body });
-  } catch {
-    /* notifications unavailable */
-  }
+  } catch {}
 }
 
 function stopTicking() {

@@ -1,176 +1,160 @@
-# 🐱 Pomodoro Cat
+# 🐱 Catodoro
 
-Кроссплатформенное desktop-приложение для управления временем по методике Pomodoro
-с анимированным котиком-компаньоном. Pixel art стиль, гейм-механики (покорми/поиграй
-с котом во время перерыва), без GIF — анимации, построены на спрайт-листах из Aseprite.
+Уютный десктопный Pomodoro-таймер с пиксельным котом-компаньоном. Кот работает вместе с тобой, дремлет на перерыве, ест из миски и играет с мячиком. Всё нарисовано в pixel art и оживает через спрайт-листы из Aseprite, без единого GIF.
 
-> **Статус:** ранний прототип. Работает базовая анимация кота и главный экран.
-> Логика таймера, переключение состояний кота, шторки задач/музыки/настроек — впереди.
+> Личный проект в две руки. Код: Анна ([@AnnaDaniuk777](https://github.com/AnnaDaniuk777)). Дизайн, пиксель-арт и анимации кота: **lobotomy-online**.
 
----
+**Язык / Language:** &nbsp; [🇷🇺 Русский](#-русский) &nbsp;|&nbsp; [🇬🇧 English](#-english)
 
-## 🛠 Стек
-
-- **Vite 8** + **React 19** + **TypeScript 6** — renderer
-- **Electron 42** — frameless окно 458×496, ESM main/preload
-- Кастомный хук `useSpriteAnimation` на `requestAnimationFrame` —
-  рендер кадров без GIF
+> ℹ️ Скриншоты лежат в папке [`docs/`](docs/). Часть окон (плавающий виджет, мини-плеер, трей) существует только в Electron-сборке, в браузерной версии их нет.
 
 ---
 
-## 🚀 Запуск
+<a name="-русский"></a>
+<details open>
+<summary><h2>🇷🇺 Русский</h2></summary>
 
-### Скрипты
+### О проекте
 
-| Скрипт | Что делает |
-|---|---|
-| `npm run dev` | Параллельно стартует Vite dev-сервер и Electron-окно. |
-| `npm run dev:web` | Только Vite в браузере, без Electron |
-| `npm run build` | TS-проверка + продакшен-сборка renderer и Electron |
-| `npm run build:electron` | Собирает `electron/*.ts` в `dist-electron/*.mjs` |
-| `npm run lint` | ESLint |
+Catodoro помогает держать фокус по методике Pomodoro: чередует рабочие интервалы и перерывы, а компанию тебе составляет пиксельный кот, который реагирует на то, что происходит на таймере. Проект пока в развитии, но основные экраны и механики уже работают.
 
----
+### Экраны и окна
 
-## 🏗 Архитектура — Feature-Sliced Design (light)
+#### 🏠 Главный экран
 
-Код в `src/` разложен по **слоям FSD**. Документация методологии:
-<https://feature-sliced.design/ru/>
+![Главный экран](docs/main.png)
 
-```text
-src/
-├── app/         ← инициализация: entry, провайдеры, глобальные стили
-├── pages/       ← страницы (у нас пока одна — main)
-├── widgets/     ← композитные блоки экрана (titlebar, cat-stage, ...)
-├── features/    ← (пусто пока) пользовательские действия (start-timer, add-task, ...)
-├── entities/    ← бизнес-сущности (cat; позже — timer, task, track, settings)
-└── shared/      ← переиспользуемое без бизнес-смысла (ui-kit, libs, assets)
-```
+Кот, крупный таймер и управление. Клик по коту запускает таймер и ставит его на паузу, кнопка сброса возвращает интервал в начало. Рядом иконки «покормить» и «поиграть» для перерыва. Внизу навигация: задачи, музыка, настройки. Сверху кнопки свернуть и закрыть.
 
-### Главное правило: импорты только сверху вниз
+#### ⚙️ Настройки
 
-```text
-app → pages → widgets → features → entities → shared
-```
+![Настройки](docs/settings.png)
 
-- `widgets/titlebar` может импортить из `shared/`, `entities/`, `features/` ✓
-- `entities/cat` НЕ может импортить из `widgets/` или `features/` ✗
-- Слайсы внутри одного слоя друг от друга **не зависят** (`widgets/titlebar` не лезет в `widgets/cat-stage`)
+Длительности работы, короткого и длинного перерыва, число сессий до длинного перерыва, авто-цикл, звук и громкость, уведомления, режим «поверх всех окон», повтор плейлиста и переключение языка (русский и английский).
 
-Это даёт **гарантированную развязанность**: фичу можно удалить или переписать, не сломав соседние.
+#### 🎵 Музыкальный плеер
 
-### Public API через `index.ts`
+![Плеер](docs/player.png)
 
-Каждый слайс наружу торчит **только тем что экспортит из своего `index.ts`**. Внутренности недоступны:
+Свой плейлист: добавление треков, play и pause, предыдущий и следующий, громкость колёсиком и перетаскиванием, перемотка удержанием, анимация-эквалайзер и таймлайн с лапкой. Пути треков запоминаются между запусками.
 
-```ts
-// src/entities/cat/index.ts
-export { Cat } from './ui/Cat';
-// useSpriteAnimation НЕ экспортится — это внутренняя кухня entity
+#### ✅ Список задач
 
-// src/widgets/cat-stage/ui/CatStage.tsx
-import { Cat } from '@/entities/cat';                       // ✓ через Public API
-import { useSpriteAnimation } from '@/entities/cat/lib/...'; // ✗ нельзя
-```
+![Список задач](docs/todo.png)
 
-### Структура слайса (сегменты)
+Простые дела: добавление, инлайн-редактирование, отметка галочкой-лапкой, счётчик и очистка выполненного.
 
-```text
-src/<layer>/<slice>/
-├── ui/        ← React-компоненты (отвечают только за рендер)
-├── model/     ← состояние и логика (Zustand-сторы, селекторы)
-├── lib/       ← вспомогательные функции, хуки
-├── api/       ← сетевые вызовы (у нас пока пусто)
-└── index.ts   ← Public API
-```
+#### 🐾 Плавающий виджет таймера
 
-Не все сегменты обязательны — добавляются по необходимости.
+![Виджет таймера](docs/widget-timer.png)
 
-### Path alias
+Когда основное окно свёрнуто, на экране остаётся маленькое окошко с котом и таймером. Его можно перетаскивать, а клик запускает и ставит таймер на паузу.
 
-В `vite.config.ts` и `tsconfig.app.json` настроен алиас:
+#### 🎧 Мини-плеер
 
-```ts
-'@/*' → 'src/*'
-```
+![Мини-плеер](docs/mini-player.png)
 
-Импорты выглядят так: `import { Cat } from '@/entities/cat';` вместо `'../../../../entities/cat'`.
+Отдельное компактное окно, чтобы управлять музыкой не разворачивая приложение: предыдущий, play, следующий, громкость и перемотка. Кот сидит на панели и переезжает к регулятору громкости.
 
-### Workflow для новой фичи
+Ещё есть иконка в системном трее (клик запускает и ставит на паузу, двойной клик открывает окно) и уведомления от имени Catodoro в конце каждого интервала.
 
-Пример: добавляем логику таймера (Issue #1).
+### Возможности кратко
 
-1. **Создаём entity** `src/entities/timer/`:
-   - `model/store.ts` — Zustand store: `timeLeft`, `isRunning`, actions
-   - `model/useTimerCountdown.ts` — хук с `setInterval`
-   - `lib/format.ts` — `formatTime(seconds): "25:00"`
-   - `ui/TimerDisplay.tsx` — `<span>{formatted}</span>`
-   - `index.ts` — экспортит `useTimerStore`, `TimerDisplay`
-2. **Создаём features** в `src/features/`:
-   - `start-timer/ui/StartButton.tsx` — вызывает `useTimerStore.start()`
-   - `reset-timer/ui/ResetButton.tsx` — вызывает `useTimerStore.reset()`
-3. **Обновляем widget** `src/widgets/timer-panel`:
-   - Заменяем плейсхолдер `<span>25:00</span>` на `<TimerDisplay />`
-   - Заменяем плейсхолдер `IconButton` на `<StartButton />` и `<ResetButton />`
+- Таймер Pomodoro с работой, короткими и длинными перерывами, авто-циклом и сохранением прогресса.
+- Живой кот со своей мини стейт-машиной анимаций: работает, отдыхает, спит, ест, играет.
+- Музыкальный плеер с плейлистом, перемоткой и повтором.
+- Список задач.
+- Плавающий виджет таймера и мини-плеер при свёрнутом окне.
+- Трей и уведомления.
+- Интерфейс на русском и английском.
 
-Page (`MainScreen`) и другие виджеты — не трогаем. Изменения локализованы.
+</details>
 
----
+<a name="-english"></a>
+<details>
+<summary><h2>🇬🇧 English</h2></summary>
 
-## ⌨ Архитектурные принципы
+### About
 
-В дополнение к FSD стараемся придерживаться:
+Catodoro helps you stay focused with the Pomodoro method: it alternates work intervals and breaks, and a pixel cat keeps you company, reacting to what the timer is doing. The project is still growing, but the core screens and mechanics already work.
 
-- **DRY** — повторяющиеся UI-паттерны выносим в `shared/ui/`,
-  магические числа — в CSS-переменные (`--scale` etc.) и `shared/config.ts`.
-- **KISS** — без преждевременной декомпозиции. Файлов делаем столько, сколько реально нужно.
-- **YAGNI** — не добавляем фичи «впрок». Сначала кейс — потом код.
-- **SRP** — каждый файл отвечает за одно: `ui/` рендерит, `model/` хранит состояние,
-  `lib/` помогает.
+### Screens and windows
 
----
+#### 🏠 Main screen
 
-## 🪪 Лицензия
+![Main screen](docs/main.png)
 
-**GNU GPL 3.0** ([`LICENSE`](LICENSE)).
+The cat, a large timer and the controls. Clicking the cat starts the timer and pauses it, the reset button sends the interval back to the start. Next to it are the feed and play icons for breaks. The bottom bar navigates to tasks, music and settings. The top has minimize and close.
 
-Лицензия копилефт, обусловлена использованием шрифта Arcade Jeu (тоже GPL 3.0).
-Это означает: любой производный код должен распространяться под совместимой
-лицензией с открытым исходником.
+#### ⚙️ Settings
 
-### Лицензии используемых ассетов
+![Settings](docs/settings.png)
 
-| Ассет | Лицензия | Источник |
-|---|---|---|
-| Arcade Jeu (шрифт) | GPL 3.0 | https://fonts-online.ru/fonts/arcade-jeu |
-| Press Start 2P (шрифт) | OFL | https://fonts.google.com/specimen/Press+Start+2P |
-| Спрайты кота + UI-элементы | © команда проекта | внутренний дизайн |
+Work, short break and long break durations, the number of sessions before a long break, auto cycle, sound and volume, notifications, an always on top mode, playlist repeat and language switching (Russian and English).
+
+#### 🎵 Music player
+
+![Player](docs/player.png)
+
+Your own playlist: add tracks, play and pause, previous and next, volume by wheel and drag, hold to scrub, an equalizer animation and a timeline with a paw. Track paths are remembered between launches.
+
+#### ✅ Task list
+
+![Task list](docs/todo.png)
+
+Simple to do items: add, edit inline, tick with a paw checkbox, a counter and a clear done action.
+
+#### 🐾 Floating timer widget
+
+![Timer widget](docs/widget-timer.png)
+
+When the main window is minimized, a small window with the cat and timer stays on screen. You can drag it, and a click starts and pauses the timer.
+
+#### 🎧 Mini player
+
+![Mini player](docs/mini-player.png)
+
+A separate compact window to control music without restoring the app: previous, play, next, volume and scrub. The cat sits on the panel and slides over to the volume control.
+
+There is also a system tray icon (click starts and pauses, double click opens the window) and notifications from Catodoro at the end of each interval.
+
+### Features at a glance
+
+- Pomodoro timer with work, short and long breaks, auto cycle and saved progress.
+- A living cat with its own mini animation state machine: works, rests, sleeps, eats, plays.
+- Music player with a playlist, scrubbing and repeat.
+- Task list.
+- Floating timer widget and mini player when the window is minimized.
+- Tray and notifications.
+- Russian and English interface.
+
+</details>
 
 ---
 
-## 🤝 Контрибьюция
+## 🚀 Запуск / Run
 
-Проект open source, но текущая команда уже сформирована — внешний контрибьют рассматриваем
-в индивидуальном порядке. Перед PR — пожалуйста, открой issue с описанием идеи,
-обсудим направление.
-
-### Workflow
+Нужен свежий Node.js (20 или новее) / Requires a recent Node.js (20 or newer).
 
 ```bash
-# Каждая новая фича/багфикс — отдельная ветка
-git checkout -b feat/timer-logic
-
-# Делаешь работу, коммитишь
-git commit -m "feat(timer): add countdown logic"
-git push -u origin feat/timer-logic
-
-# Открываешь Pull Request на GitHub
-# Команда ревьюит → одобряет → merge в main
-# Issue закрывается автоматически если в PR описании есть "Closes #1"
+npm install
+npm run dev
 ```
 
-### Стиль кода
+| Скрипт / Script | Что делает / What it does |
+|---|---|
+| `npm run dev` | Vite dev-сервер плюс окно Electron. / Vite dev server plus the Electron window. |
+| `npm run dev:web` | Только Vite в браузере, без Electron. / Vite in the browser only, no Electron. |
+| `npm run build` | Проверка типов и продакшен-сборка. / Type check and production build. |
+| `npm run lint` | ESLint. |
 
-- TypeScript strict
-- ESLint конфиг — `eslint.config.js`
-- Перед коммитом — `npm run lint`
+## 👭 Авторы / Authors
+
+- **Анна** ([@AnnaDaniuk777](https://github.com/AnnaDaniuk777)): код и разработка / code and development.
+- **lobotomy-online**: дизайн, пиксель-арт, анимации кота / design, pixel art, cat animations.
+
+## 🪪 Лицензия / License
+
+GNU GPL 3.0, см. / see [`LICENSE`](LICENSE). Копилефт выбран из-за шрифта Arcade Jeu (тоже под GPL 3.0). / Copyleft is chosen because of the Arcade Jeu font (also under GPL 3.0).
+
+Шрифты / Fonts: Arcade Jeu (GPL 3.0), Press Start 2P (OFL). Спрайты кота и UI-элементы созданы авторами проекта. / Cat sprites and UI elements are created by the project authors.

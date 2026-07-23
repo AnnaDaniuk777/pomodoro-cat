@@ -62,6 +62,35 @@ let tray: Tray | null = null;
 let isQuitting = false;
 let playerHasTrack = false;
 
+type SolidZone = { x: number; y: number; w: number; h: number };
+let playerWidgetZones: SolidZone[] = [];
+let playerWidgetDragging = false;
+let playerWidgetIgnoring = false;
+
+function pollPlayerWidgetMouse() {
+  const target = playerWidgetWin;
+  if (!target || target.isDestroyed() || !target.isVisible()) {
+    playerWidgetIgnoring = false;
+    return;
+  }
+  let ignore = false;
+  if (!playerWidgetDragging) {
+    const pt = screen.getCursorScreenPoint();
+    const b = target.getBounds();
+    const lx = pt.x - b.x;
+    const ly = pt.y - b.y;
+    const inside = lx >= 0 && ly >= 0 && lx < b.width && ly < b.height;
+    const solid = playerWidgetZones.some(
+      (z) => lx >= z.x && lx <= z.x + z.w && ly >= z.y && ly <= z.y + z.h,
+    );
+    ignore = inside && !solid;
+  }
+  if (ignore !== playerWidgetIgnoring) {
+    playerWidgetIgnoring = ignore;
+    target.setIgnoreMouseEvents(ignore);
+  }
+}
+
 function isMainHidden(): boolean {
   return !!win && (!win.isVisible() || win.isMinimized());
 }
@@ -172,6 +201,8 @@ function createPlayerWidget() {
       hash: 'player-widget',
     });
   }
+
+  setInterval(pollPlayerWidgetMouse, 80);
 }
 
 function createWindow() {
@@ -183,6 +214,7 @@ function createWindow() {
     maximizable: false,
     fullscreenable: false,
     frame: false,
+    thickFrame: false,
     icon: path.join(__dirname, '../../build/app-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
@@ -216,6 +248,7 @@ function createWindow() {
   const onMainShown = () => {
     widgetWin?.hide();
     playerWidgetWin?.hide();
+    if (win) enforceContentSize(win, WINDOW_WIDTH, WINDOW_HEIGHT);
   };
   win.on('hide', onMainHidden);
   win.on('minimize', onMainHidden);
@@ -226,6 +259,24 @@ function createWindow() {
   ipcMain.on('window:close', () => win?.close());
   ipcMain.on('window:set-always-on-top', (_event, flag: boolean) => {
     win?.setAlwaysOnTop(Boolean(flag));
+  });
+  ipcMain.on(
+    'player-widget:solid-zones',
+    (_event, zones: SolidZone[]) => {
+      if (Array.isArray(zones)) {
+        playerWidgetZones = zones.filter(
+          (z) =>
+            z &&
+            typeof z.x === 'number' &&
+            typeof z.y === 'number' &&
+            typeof z.w === 'number' &&
+            typeof z.h === 'number',
+        );
+      }
+    },
+  );
+  ipcMain.on('player-widget:dragging', (_event, flag: boolean) => {
+    playerWidgetDragging = Boolean(flag);
   });
   ipcMain.on('tray:update', (_event, dataUrl: string) => {
     if (tray && typeof dataUrl === 'string' && dataUrl.startsWith('data:image')) {

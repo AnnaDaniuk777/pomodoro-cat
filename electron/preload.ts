@@ -1,10 +1,22 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, webUtils } from 'electron';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   minimize: () => ipcRenderer.send('window:minimize'),
   close: () => ipcRenderer.send('window:close'),
   setAlwaysOnTop: (flag: boolean) =>
     ipcRenderer.send('window:set-always-on-top', flag),
+  playerWidgetSetSolidZones: (
+    zones: Array<{ x: number; y: number; w: number; h: number }>,
+  ) => ipcRenderer.send('player-widget:solid-zones', zones),
+  playerWidgetSetDragging: (flag: boolean) =>
+    ipcRenderer.send('player-widget:dragging', flag),
+  getFilePath: (file: File) => {
+    try {
+      return webUtils.getPathForFile(file);
+    } catch {
+      return null;
+    }
+  },
   updateTrayIcon: (dataUrl: string) => ipcRenderer.send('tray:update', dataUrl),
   onTrayToggle: (callback: () => void) => {
     ipcRenderer.on('tray:toggle-timer', callback);

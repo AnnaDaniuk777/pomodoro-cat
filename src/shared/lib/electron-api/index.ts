@@ -1,10 +1,3 @@
-/**
- * Thin wrapper around `window.electronAPI` exposed by `electron/preload.ts`.
- *
- * In the browser (npm run dev:web) `window.electronAPI` is `undefined`, so
- * each method is a no-op. In Electron it dispatches the right IPC event.
- */
-
 export type WidgetTimerState = {
   mode: 'work' | 'break';
   status: 'idle' | 'running' | 'paused';
@@ -18,7 +11,15 @@ export type WidgetPlayerState = {
   volume: number;
 };
 
-export type PlayerCommand = 'toggle' | 'next' | 'prev' | 'volume' | 'seek';
+export type PlayerCommand =
+  | 'toggle'
+  | 'next'
+  | 'prev'
+  | 'volume'
+  | 'seek'
+  | 'scrub';
+
+export type SolidZone = { x: number; y: number; w: number; h: number };
 
 declare global {
   interface Window {
@@ -26,6 +27,9 @@ declare global {
       minimize: () => void;
       close: () => void;
       setAlwaysOnTop: (flag: boolean) => void;
+      playerWidgetSetSolidZones: (zones: SolidZone[]) => void;
+      playerWidgetSetDragging: (flag: boolean) => void;
+      getFilePath: (file: File) => string | null;
       updateTrayIcon: (dataUrl: string) => void;
       onTrayToggle: (callback: () => void) => void;
       sendTimerState: (state: WidgetTimerState) => void;
@@ -56,6 +60,11 @@ export const electronApi = {
   minimize: () => window.electronAPI?.minimize(),
   close: () => window.electronAPI?.close(),
   setAlwaysOnTop: (flag: boolean) => window.electronAPI?.setAlwaysOnTop(flag),
+  playerWidgetSetSolidZones: (zones: SolidZone[]) =>
+    window.electronAPI?.playerWidgetSetSolidZones(zones),
+  playerWidgetSetDragging: (flag: boolean) =>
+    window.electronAPI?.playerWidgetSetDragging(flag),
+  getFilePath: (file: File) => window.electronAPI?.getFilePath(file) ?? null,
   updateTrayIcon: (dataUrl: string) =>
     window.electronAPI?.updateTrayIcon(dataUrl),
   onTrayToggle: (callback: () => void) => {

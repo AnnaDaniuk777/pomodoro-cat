@@ -90,6 +90,10 @@ function usePlayerWidgetSync() {
   }, [tracks.length, isPlaying, currentTime, duration, volume]);
 
   useEffect(() => {
+    void playerStore.restorePlaylist();
+  }, []);
+
+  useEffect(() => {
     electronApi.onAddPaths((paths) => {
       void (async () => {
         for (const filePath of paths) {
@@ -97,7 +101,7 @@ function usePlayerWidgetSync() {
           if (!data) continue;
           const name =
             filePath.split(/[\\/]/).pop()?.replace(/\.[^.]+$/, '') ?? filePath;
-          playerStore.addTrackFromData(name, data);
+          playerStore.addTrackFromData(name, data, filePath);
         }
       })();
     });
@@ -113,6 +117,8 @@ function usePlayerWidgetSync() {
       } else if (cmd === 'seek' && typeof value === 'number') {
         const { duration: total } = playerStore.getState();
         if (total > 0) playerStore.seek(value * total);
+      } else if (cmd === 'scrub' && typeof value === 'number') {
+        playerStore.scrub(value);
       }
     });
   }, []);

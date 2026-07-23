@@ -1,4 +1,4 @@
-export { Cat } from './ui/Cat';
+export { Cat, preloadCatSheets } from './ui/Cat';
 export type { CatAnimationName } from './ui/Cat';
 export {
   extractFrames,

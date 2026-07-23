@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import idleSheet from '@/shared/assets/sprites/cat.png';
 import idleData from '@/shared/assets/sprites/cat.json';
 import playStartSheet from '@/shared/assets/sprites/cat-play-start.png';
@@ -18,6 +18,26 @@ import {
 
 export type CatAnimationName = 'idle' | 'play' | 'chill';
 
+const ALL_SHEETS = [
+  idleSheet,
+  playStartSheet,
+  playCycleSheet,
+  chillStartSheet,
+  chillSleepSheet,
+];
+
+const warmedSheets: HTMLImageElement[] = [];
+
+export function preloadCatSheets() {
+  if (warmedSheets.length > 0) return;
+  for (const src of ALL_SHEETS) {
+    const img = new Image();
+    img.src = src;
+    void img.decode().catch(() => {});
+    warmedSheets.push(img);
+  }
+}
+
 type Clip = {
   sheet: string;
   data: AsepriteJSON;
@@ -27,8 +47,7 @@ type Clip = {
   scale?: number;
   durationScale?: number;
   range?: [number, number];
-  smooth?: boolean;
-  squash?: [number, number];
+  driftTo?: [number, number];
 };
 
 const CLIPS: Record<CatAnimationName, Clip[]> = {
@@ -40,7 +59,6 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: false,
       dx: 12,
       dy: 7,
-      squash: [1.05, 0.94],
     },
     {
       sheet: playCycleSheet,
@@ -48,7 +66,6 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: true,
       dx: 0,
       dy: 7,
-      squash: [1.05, 0.94],
     },
   ],
   chill: [
@@ -58,6 +75,7 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: false,
       dx: 4,
       dy: 5,
+      driftTo: [-5, -18],
     },
     {
       sheet: chillSleepSheet,
@@ -65,7 +83,6 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: true,
       dx: 2,
       dy: -18,
-      smooth: true,
     },
   ],
 };
@@ -106,9 +123,29 @@ export function Cat({ animation = 'idle' }: CatProps) {
     onComplete: clip.loop ? undefined : advanceClip,
   });
 
+  const [drifted, setDrifted] = useState(false);
+  useEffect(() => {
+    setDrifted(false);
+    if (!clip.driftTo) return;
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setDrifted(true));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [clip]);
+
+  const clipDuration = useMemo(
+    () => frames.reduce((sum, frame) => sum + frame.duration, 0),
+    [frames],
+  );
+
   const { x, y, w, h } = current.frame;
   const { w: sheetW, h: sheetH } = clip.data.meta.size;
   const renderScale = CAT_SCALE * (clip.scale ?? 1);
+  const [tx, ty] = clip.driftTo && drifted ? clip.driftTo : [clip.dx, clip.dy];
 
   return (
     <div
@@ -120,9 +157,11 @@ export function Cat({ animation = 'idle' }: CatProps) {
         backgroundSize: `${sheetW * renderScale}px ${sheetH * renderScale}px`,
         backgroundRepeat: 'no-repeat',
         imageRendering: 'pixelated',
-        transform: `translate(${clip.dx * CAT_SCALE}px, ${clip.dy * CAT_SCALE}px) scale(${clip.squash?.[0] ?? 1}, ${clip.squash?.[1] ?? 1})`,
-        transformOrigin: '50% 100%',
-        transition: clip.smooth ? 'transform 0.7s ease-in-out' : undefined,
+        transform: `translate(${tx * CAT_SCALE}px, ${ty * CAT_SCALE}px)`,
+        transition:
+          clip.driftTo && drifted
+            ? `transform ${clipDuration}ms ease-in-out`
+            : undefined,
       }}
     />
   );
