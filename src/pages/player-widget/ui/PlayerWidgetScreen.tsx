@@ -39,6 +39,39 @@ export function PlayerWidgetScreen() {
     electronApi.onPlayerState(setPlayer);
   }, []);
 
+  useEffect(() => {
+    const report = () => {
+      const zones = Array.from(
+        document.querySelectorAll(
+          '.pwidget__panel, .pwidget__volume-popup, .pwidget__cat',
+        ),
+      ).map((el) => {
+        const r = el.getBoundingClientRect();
+        return {
+          x: Math.floor(r.left),
+          y: Math.floor(r.top),
+          w: Math.ceil(r.width),
+          h: Math.ceil(r.height),
+        };
+      });
+      electronApi.playerWidgetSetSolidZones(zones);
+    };
+    report();
+    const intervalId = window.setInterval(report, 400);
+    const onDown = () => electronApi.playerWidgetSetDragging(true);
+    const onUp = () => electronApi.playerWidgetSetDragging(false);
+    window.addEventListener('mousedown', onDown);
+    window.addEventListener('mouseup', onUp);
+    window.addEventListener('blur', onUp);
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('mousedown', onDown);
+      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('blur', onUp);
+      electronApi.playerWidgetSetDragging(false);
+    };
+  }, []);
+
   const measureVolumeCenter = () => {
     const wrap = volumeWrapRef.current;
     const container = wrap?.closest('.pwidget');
@@ -72,6 +105,25 @@ export function PlayerWidgetScreen() {
       'volume',
       Math.min(1, Math.max(0, player.volume + (deltaY < 0 ? 0.05 : -0.05))),
     );
+  };
+
+  const holdRef = useRef({ timer: 0, interval: 0, held: false });
+
+  const startHold = (direction: 1 | -1) => {
+    holdRef.current.held = false;
+    holdRef.current.timer = window.setTimeout(() => {
+      holdRef.current.held = true;
+      electronApi.playerCmd('scrub', direction * 5);
+      holdRef.current.interval = window.setInterval(
+        () => electronApi.playerCmd('scrub', direction * 5),
+        200,
+      );
+    }, 400);
+  };
+
+  const endHold = () => {
+    window.clearTimeout(holdRef.current.timer);
+    window.clearInterval(holdRef.current.interval);
   };
 
   const startDrag = (e: React.MouseEvent) => {
@@ -128,24 +180,40 @@ export function PlayerWidgetScreen() {
           />
         </div>
         <div className="pwidget__controls">
-          <IconButton
-            icon={prevBtn}
-            alt="Previous"
-            className="pwidget__nav"
-            onClick={() => electronApi.playerCmd('prev')}
-          />
+          <span
+            onMouseDown={() => startHold(-1)}
+            onMouseUp={endHold}
+            onMouseLeave={endHold}
+          >
+            <IconButton
+              icon={prevBtn}
+              alt="Previous"
+              className="pwidget__nav"
+              onClick={() => {
+                if (!holdRef.current.held) electronApi.playerCmd('prev');
+              }}
+            />
+          </span>
           <IconButton
             icon={player.isPlaying ? pauseBtn : playBtn}
             alt={player.isPlaying ? 'Pause' : 'Play'}
             className="pwidget__play"
             onClick={() => electronApi.playerCmd('toggle')}
           />
-          <IconButton
-            icon={nextBtn}
-            alt="Next"
-            className="pwidget__nav"
-            onClick={() => electronApi.playerCmd('next')}
-          />
+          <span
+            onMouseDown={() => startHold(1)}
+            onMouseUp={endHold}
+            onMouseLeave={endHold}
+          >
+            <IconButton
+              icon={nextBtn}
+              alt="Next"
+              className="pwidget__nav"
+              onClick={() => {
+                if (!holdRef.current.held) electronApi.playerCmd('next');
+              }}
+            />
+          </span>
           <span ref={volumeWrapRef} onWheel={(e) => adjustVolumeByWheel(e.deltaY)}>
             <IconButton
               icon={volumeBtn}

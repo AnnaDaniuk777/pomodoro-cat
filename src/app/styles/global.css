@@ -133,7 +133,9 @@ img {
 }
 
 .titlebar .icon-btn:hover,
-.titlebar .icon-btn:active {
+.titlebar .icon-btn:active,
+.pwidget__window-btn:hover,
+.pwidget__window-btn:active {
   transform: none;
   filter: none;
 }

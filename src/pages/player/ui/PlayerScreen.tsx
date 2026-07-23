@@ -119,9 +119,21 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
   const { tracks, currentIndex, isPlaying, currentTime, duration, volume } =
     usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
+  const [volumeCenter, setVolumeCenter] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const volumeTrackRef = useRef<HTMLDivElement>(null);
+  const volumeWrapRef = useRef<HTMLSpanElement>(null);
+
+  const measureVolumeCenter = () => {
+    const wrap = volumeWrapRef.current;
+    const screen = wrap?.closest('.screen');
+    if (wrap && screen) {
+      const wrapRect = wrap.getBoundingClientRect();
+      const screenRect = screen.getBoundingClientRect();
+      setVolumeCenter(wrapRect.left + wrapRect.width / 2 - screenRect.left);
+    }
+  };
 
   const progress = duration > 0 ? currentTime / duration : 0;
 
@@ -137,6 +149,25 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
     if (!rect || rect.height === 0) return;
     const fraction = 1 - Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
     playerStore.setVolume(fraction);
+  };
+
+  const holdRef = useRef({ timer: 0, interval: 0, held: false });
+
+  const startHold = (direction: 1 | -1) => {
+    holdRef.current.held = false;
+    holdRef.current.timer = window.setTimeout(() => {
+      holdRef.current.held = true;
+      playerStore.scrub(direction * 5);
+      holdRef.current.interval = window.setInterval(
+        () => playerStore.scrub(direction * 5),
+        200,
+      );
+    }, 400);
+  };
+
+  const endHold = () => {
+    window.clearTimeout(holdRef.current.timer);
+    window.clearInterval(holdRef.current.interval);
   };
 
   return (
@@ -157,25 +188,42 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
           className="player__folder"
           onClick={() => fileInputRef.current?.click()}
         />
-        <IconButton
-          icon={prevBtn}
-          alt="Previous"
-          className="player__nav-btn"
-          onClick={() => playerStore.prev()}
-        />
+        <span
+          onMouseDown={() => startHold(-1)}
+          onMouseUp={endHold}
+          onMouseLeave={endHold}
+        >
+          <IconButton
+            icon={prevBtn}
+            alt="Previous"
+            className="player__nav-btn"
+            onClick={() => {
+              if (!holdRef.current.held) playerStore.prev();
+            }}
+          />
+        </span>
         <IconButton
           icon={isPlaying ? pauseBtn : playBtn}
           alt={isPlaying ? 'Pause' : 'Play'}
           className="player__play"
           onClick={() => playerStore.toggle()}
         />
-        <IconButton
-          icon={nextBtn}
-          alt="Next"
-          className="player__nav-btn"
-          onClick={() => playerStore.next()}
-        />
         <span
+          onMouseDown={() => startHold(1)}
+          onMouseUp={endHold}
+          onMouseLeave={endHold}
+        >
+          <IconButton
+            icon={nextBtn}
+            alt="Next"
+            className="player__nav-btn"
+            onClick={() => {
+              if (!holdRef.current.held) playerStore.next();
+            }}
+          />
+        </span>
+        <span
+          ref={volumeWrapRef}
           onWheel={(e) =>
             playerStore.setVolume(volume + (e.deltaY < 0 ? 0.05 : -0.05))
           }
@@ -184,13 +232,21 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
             icon={volumeBtn}
             alt="Volume"
             className="player__volume-btn"
-            onClick={() => setVolumeOpen((open) => !open)}
+            onClick={() => {
+              measureVolumeCenter();
+              setVolumeOpen((open) => !open);
+            }}
           />
         </span>
       </div>
       {volumeOpen && (
         <div
           className="player__volume-popup"
+          style={
+            volumeCenter !== null
+              ? { left: volumeCenter, transform: 'translateX(-50%)' }
+              : undefined
+          }
           onWheel={(e) =>
             playerStore.setVolume(volume + (e.deltaY < 0 ? 0.05 : -0.05))
           }
