@@ -18,26 +18,6 @@ import {
 
 export type CatAnimationName = 'idle' | 'play' | 'chill';
 
-const ALL_SHEETS = [
-  idleSheet,
-  playStartSheet,
-  playCycleSheet,
-  chillStartSheet,
-  chillSleepSheet,
-];
-
-const warmedSheets: HTMLImageElement[] = [];
-
-export function preloadCatSheets() {
-  if (warmedSheets.length > 0) return;
-  for (const src of ALL_SHEETS) {
-    const img = new Image();
-    img.src = src;
-    void img.decode().catch(() => {});
-    warmedSheets.push(img);
-  }
-}
-
 type Clip = {
   sheet: string;
   data: AsepriteJSON;
