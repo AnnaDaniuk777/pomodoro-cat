@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import idleSheet from '@/shared/assets/sprites/cat.png';
 import idleData from '@/shared/assets/sprites/cat.json';
 import playStartSheet from '@/shared/assets/sprites/cat-play-start.png';
@@ -47,7 +47,6 @@ type Clip = {
   scale?: number;
   durationScale?: number;
   range?: [number, number];
-  driftTo?: [number, number];
 };
 
 const CLIPS: Record<CatAnimationName, Clip[]> = {
@@ -58,14 +57,14 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       data: playStartData,
       loop: false,
       dx: 12,
-      dy: 7,
+      dy: 3,
     },
     {
       sheet: playCycleSheet,
       data: playCycleData,
       loop: true,
       dx: 0,
-      dy: 7,
+      dy: 3,
     },
   ],
   chill: [
@@ -74,15 +73,14 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       data: chillStartData,
       loop: false,
       dx: 4,
-      dy: 5,
-      driftTo: [-5, -18],
+      dy: 1,
     },
     {
       sheet: chillSleepSheet,
       data: chillSleepData,
       loop: true,
-      dx: 2,
-      dy: -18,
+      dx: 11,
+      dy: 1,
     },
   ],
 };
@@ -123,29 +121,9 @@ export function Cat({ animation = 'idle' }: CatProps) {
     onComplete: clip.loop ? undefined : advanceClip,
   });
 
-  const [drifted, setDrifted] = useState(false);
-  useEffect(() => {
-    setDrifted(false);
-    if (!clip.driftTo) return;
-    let raf2 = 0;
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => setDrifted(true));
-    });
-    return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-    };
-  }, [clip]);
-
-  const clipDuration = useMemo(
-    () => frames.reduce((sum, frame) => sum + frame.duration, 0),
-    [frames],
-  );
-
   const { x, y, w, h } = current.frame;
   const { w: sheetW, h: sheetH } = clip.data.meta.size;
   const renderScale = CAT_SCALE * (clip.scale ?? 1);
-  const [tx, ty] = clip.driftTo && drifted ? clip.driftTo : [clip.dx, clip.dy];
 
   return (
     <div
@@ -157,11 +135,7 @@ export function Cat({ animation = 'idle' }: CatProps) {
         backgroundSize: `${sheetW * renderScale}px ${sheetH * renderScale}px`,
         backgroundRepeat: 'no-repeat',
         imageRendering: 'pixelated',
-        transform: `translate(${tx * CAT_SCALE}px, ${ty * CAT_SCALE}px)`,
-        transition:
-          clip.driftTo && drifted
-            ? `transform ${clipDuration}ms ease-in-out`
-            : undefined,
+        transform: `translate(${clip.dx * CAT_SCALE}px, ${clip.dy * CAT_SCALE}px)`,
       }}
     />
   );
