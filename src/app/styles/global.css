@@ -352,6 +352,17 @@ img {
   pointer-events: none;
 }
 
+.player__music-icon {
+  position: absolute;
+  top: calc(25px * var(--screen-scale));
+  left: calc(104px * var(--screen-scale));
+  width: calc(21px * var(--screen-scale));
+  height: calc(21px * var(--screen-scale));
+  image-rendering: pixelated;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .player__back {
   position: absolute;
   top: 47px;
