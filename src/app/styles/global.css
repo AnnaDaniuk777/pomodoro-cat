@@ -148,6 +148,10 @@ img {
   -webkit-app-region: no-drag;
 }
 
+.cat-stage__cat--chill {
+  bottom: 159px;
+}
+
 .cat-stage__bowl {
   position: absolute;
   left: 42px;
@@ -220,7 +224,7 @@ img {
 .bottom-nav {
   position: absolute;
   bottom: 27px;
-  left: 70px;
+  left: 78px;
   gap: 30px;
   display: flex;
   justify-content: space-between;
