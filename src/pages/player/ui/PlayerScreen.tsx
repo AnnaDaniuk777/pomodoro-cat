@@ -3,8 +3,8 @@ import { extractFrames, useSpriteAnimation } from '@/entities/cat';
 import { playerStore, usePlayer } from '@/entities/player';
 import { Titlebar } from '@/widgets/titlebar';
 import { IconButton } from '@/shared/ui/IconButton';
-import playerBg from '@/shared/assets/player/player-screen-background.png';
-import headerImg from '@/shared/assets/player/player-header.png';
+import playerBg from '@/shared/assets/player/music-screen-background.png';
+import musicIcon from '@/shared/assets/player/music-icon.png';
 import backBtn from '@/shared/assets/player/back-button.png';
 import folderBtn from '@/shared/assets/player/folder-button.png';
 import prevBtn from '@/shared/assets/player/prev-button.png';
@@ -174,7 +174,7 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
     <div className="screen">
       <img className="screen__bg" src={playerBg} alt="" />
       <Titlebar />
-      <img className="player__header" src={headerImg} alt="" />
+      <img className="player__music-icon" src={musicIcon} alt="" />
       <IconButton
         icon={backBtn}
         alt="Back"

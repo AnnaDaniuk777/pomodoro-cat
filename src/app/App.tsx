@@ -7,12 +7,13 @@ import { timerStore, useTimer } from '@/entities/timer';
 import { electronApi } from '@/shared/lib/electron-api';
 import { renderTrayIcon } from '@/shared/lib/tray-icon';
 import playerScreenBg from '@/shared/assets/player/player-screen-background.png';
-import playerHeaderImg from '@/shared/assets/player/player-header.png';
+import musicScreenBg from '@/shared/assets/player/music-screen-background.png';
+import musicIconImg from '@/shared/assets/player/music-icon.png';
 import todoHeaderImg from '@/shared/assets/todo/header.png';
 
 function usePreloadAssets() {
   useEffect(() => {
-    [playerScreenBg, playerHeaderImg, todoHeaderImg].forEach((src) => {
+    [playerScreenBg, musicScreenBg, musicIconImg, todoHeaderImg].forEach((src) => {
       const img = new Image();
       img.src = src;
     });

@@ -19,6 +19,7 @@ function resolveAnimation(
 
 export function CatStage() {
   const { status, mode } = useTimer();
+  const animation = resolveAnimation(status, mode);
 
   const toggleTimer = () => {
     if (status === 'running') {
@@ -31,12 +32,16 @@ export function CatStage() {
   return (
     <div className="cat-stage">
       <div
-        className="cat-stage__cat"
+        className={
+          animation === 'chill'
+            ? 'cat-stage__cat cat-stage__cat--chill'
+            : 'cat-stage__cat'
+        }
         role="button"
         aria-label={status === 'running' ? 'Pause timer' : 'Start timer'}
         onClick={toggleTimer}
       >
-        <Cat animation={resolveAnimation(status, mode)} />
+        <Cat animation={animation} />
       </div>
       <IconButton
         icon={bowlIcon}

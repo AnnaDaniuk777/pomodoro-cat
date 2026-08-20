@@ -148,6 +148,10 @@ img {
   -webkit-app-region: no-drag;
 }
 
+.cat-stage__cat--chill {
+  bottom: 159px;
+}
+
 .cat-stage__bowl {
   position: absolute;
   left: 42px;
@@ -220,7 +224,7 @@ img {
 .bottom-nav {
   position: absolute;
   bottom: 27px;
-  left: 70px;
+  left: 78px;
   gap: 30px;
   display: flex;
   justify-content: space-between;
@@ -348,6 +352,17 @@ img {
   left: calc(9px * var(--screen-scale));
   width: calc(211px * var(--screen-scale));
   height: calc(29px * var(--screen-scale));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.player__music-icon {
+  position: absolute;
+  top: calc(25px * var(--screen-scale));
+  left: calc(104px * var(--screen-scale));
+  width: calc(21px * var(--screen-scale));
+  height: calc(21px * var(--screen-scale));
+  image-rendering: pixelated;
   z-index: 2;
   pointer-events: none;
 }
