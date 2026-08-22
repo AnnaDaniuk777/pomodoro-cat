@@ -6,11 +6,9 @@
 
 Уютный десктопный Pomodoro-таймер с пиксельным котом-компаньоном. Кот работает вместе с тобой, дремлет на перерыве, ест из миски и играет с мячиком. Всё нарисовано в pixel art и оживает через спрайт-листы из Aseprite, без единого GIF.
 
-> Личный проект в две руки. Код: Анна ([@AnnaDaniuk777](https://github.com/AnnaDaniuk777)). Дизайн, пиксель-арт и анимации кота: **lobotomy-online**.
+> Личный проект в две руки. Код: Анна ([@AnnaDaniuk777](https://github.com/AnnaDaniuk777)). Дизайн, пиксель-арт и анимации кота: [@lobotomy-online](https://github.com/lobotomy-online).
 
 **Язык / Language:** &nbsp; [🇷🇺 Русский](#-русский) &nbsp;|&nbsp; [🇬🇧 English](#-english)
-
-> ℹ️ Скриншоты лежат в папке [`docs/`](docs/). Часть окон (плавающий виджет, мини-плеер, трей) существует только в Electron-сборке, в браузерной версии их нет.
 
 ---
 
@@ -29,6 +27,12 @@ Catodoro помогает держать фокус по методике Pomodo
 ![Главный экран](docs/main.png)
 
 Кот, крупный таймер и управление. Клик по коту запускает таймер и ставит его на паузу, кнопка сброса возвращает интервал в начало. Рядом иконки «покормить» и «поиграть» для перерыва. Внизу навигация: задачи, музыка, настройки. Сверху кнопки свернуть и закрыть.
+
+#### 😴 Перерыв
+
+![Перерыв](docs/break.png)
+
+Когда начинается перерыв, кот укладывается и засыпает. Можно кликнуть по миске или по клубку, тогда он поест или поиграет.
 
 #### ⚙️ Настройки
 
@@ -89,6 +93,12 @@ Catodoro helps you stay focused with the Pomodoro method: it alternates work int
 ![Main screen](docs/main.png)
 
 The cat, a large timer and the controls. Clicking the cat starts the timer and pauses it, the reset button sends the interval back to the start. Next to it are the feed and play icons for breaks. The bottom bar navigates to tasks, music and settings. The top has minimize and close.
+
+#### 😴 Break
+
+![Break](docs/break.png)
+
+When a break starts, the cat lies down and falls asleep. Click the bowl or the yarn ball and it will eat or play.
 
 #### ⚙️ Settings
 
@@ -154,8 +164,26 @@ npm run dev
 
 ## 👭 Авторы / Authors
 
-- **Анна** ([@AnnaDaniuk777](https://github.com/AnnaDaniuk777)): код и разработка / code and development.
-- **lobotomy-online**: дизайн, пиксель-арт, анимации кота / design, pixel art, cat animations.
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/AnnaDaniuk777">
+        <img src="https://github.com/AnnaDaniuk777.png?size=100" width="100" alt="AnnaDaniuk777"><br>
+        <b>Анна</b>
+      </a><br>
+      код и разработка<br>
+      <sub>code and development</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/lobotomy-online">
+        <img src="https://github.com/lobotomy-online.png?size=100" width="100" alt="lobotomy-online"><br>
+        <b>lobotomy-online</b>
+      </a><br>
+      дизайн, пиксель-арт, анимации кота<br>
+      <sub>design, pixel art, cat animations</sub>
+    </td>
+  </tr>
+</table>
 
 ## 🪪 Лицензия / License
 
