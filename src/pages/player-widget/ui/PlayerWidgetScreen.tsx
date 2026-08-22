@@ -236,16 +236,16 @@ export function PlayerWidgetScreen() {
         <div
           ref={timelineRef}
           className="pwidget__timeline"
-          onMouseDown={(e) => {
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId);
             seekFromPointer(e.clientX);
-            const move = (ev: MouseEvent) => seekFromPointer(ev.clientX);
-            const up = () => {
-              window.removeEventListener('mousemove', move);
-              window.removeEventListener('mouseup', up);
-            };
-            window.addEventListener('mousemove', move);
-            window.addEventListener('mouseup', up);
           }}
+          onPointerMove={(e) => {
+            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+              seekFromPointer(e.clientX);
+            }
+          }}
+          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
         >
           <img className="pwidget__timeline-empty" src={progressEmpty} alt="" />
           <div
@@ -267,16 +267,16 @@ export function PlayerWidgetScreen() {
           className="pwidget__volume-popup"
           style={{ left: volumeCenter }}
           onWheel={(e) => adjustVolumeByWheel(e.deltaY)}
-          onMouseDown={(e) => {
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId);
             volumeFromPointer(e.clientY);
-            const move = (ev: MouseEvent) => volumeFromPointer(ev.clientY);
-            const up = () => {
-              window.removeEventListener('mousemove', move);
-              window.removeEventListener('mouseup', up);
-            };
-            window.addEventListener('mousemove', move);
-            window.addEventListener('mouseup', up);
           }}
+          onPointerMove={(e) => {
+            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+              volumeFromPointer(e.clientY);
+            }
+          }}
+          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
         >
           <img className="pwidget__volume-popup-bg" src={volumeSlider} alt="" />
           <div ref={volumeTrackRef} className="pwidget__volume-track">
