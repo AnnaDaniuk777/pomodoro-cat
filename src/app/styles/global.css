@@ -523,6 +523,23 @@ img {
   image-rendering: pixelated;
 }
 
+.player__eq-swap {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.player__eq-lib {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(171px * var(--screen-scale));
+  height: calc(32px * var(--screen-scale));
+  overflow: hidden;
+}
+
 .player__timeline-row {
   position: absolute;
   top: 218px;

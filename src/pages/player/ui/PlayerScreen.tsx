@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { playerStore, readSpectrum, usePlayer } from '@/entities/player';
+import {
+  getAudioGraph,
+  playerStore,
+  readSpectrum,
+  usePlayer,
+} from '@/entities/player';
 import { Titlebar } from '@/widgets/titlebar';
 import { IconButton } from '@/shared/ui/IconButton';
 import playerBg from '@/shared/assets/player/music-screen-background.png';
@@ -23,6 +28,7 @@ import trackPlayBtn from '@/shared/assets/player/track-play-button.png';
 import trackPauseBtn from '@/shared/assets/player/track-pause-button.png';
 import trackDeleteBtn from '@/shared/assets/todo/trash-light.png';
 
+const EQ_STYLE_KEY = 'catodoro-eq-style';
 const MARQUEE_PIXELS_PER_SECOND = 15;
 const MARQUEE_TRAVEL_RATIO = 0.76;
 
@@ -67,6 +73,57 @@ function rampColor(position: number) {
   const channel = (i: number) =>
     Math.round(from.rgb[i] + (to.rgb[i] - from.rgb[i]) * t);
   return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
+}
+
+function EqualizerLib() {
+  const holderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const holder = holderRef.current;
+    const graph = getAudioGraph();
+    if (!holder || !graph) return;
+
+    let instance: { destroy: () => void } | null = null;
+    let dropped = false;
+
+    void import('audiomotion-analyzer').then(({ default: AudioMotionAnalyzer }) => {
+      if (dropped) return;
+      const analyzer = new AudioMotionAnalyzer(holder, {
+        audioCtx: graph.context,
+        source: graph.source,
+        connectSpeakers: false,
+        mode: 3,
+        ledBars: true,
+        showPeaks: true,
+        overlay: true,
+        showBgColor: false,
+        showScaleX: false,
+        showScaleY: false,
+        barSpace: 0.3,
+        smoothing: 0.65,
+        minDecibels: -78,
+        maxDecibels: -18,
+      });
+      analyzer.registerGradient('catodoro', {
+        bgColor: '#242641',
+        colorStops: [
+          { pos: 0, color: '#c68476' },
+          { pos: 0.45, color: '#e1a796' },
+          { pos: 0.78, color: '#f2d2bf' },
+          { pos: 1, color: '#fdf3e8' },
+        ],
+      });
+      analyzer.gradient = 'catodoro';
+      instance = analyzer;
+    });
+
+    return () => {
+      dropped = true;
+      instance?.destroy();
+    };
+  }, []);
+
+  return <div ref={holderRef} className="player__eq-lib" />;
 }
 
 function Equalizer({ active }: { active: boolean }) {
@@ -217,6 +274,13 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
   const { tracks, currentIndex, isPlaying, currentTime, duration, volume } =
     usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
+  const [eqStyle, setEqStyle] = useState<'blocks' | 'lib'>(() => {
+    try {
+      return localStorage.getItem(EQ_STYLE_KEY) === 'lib' ? 'lib' : 'blocks';
+    } catch {
+      return 'blocks';
+    }
+  });
   const [volumeCenter, setVolumeCenter] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -379,7 +443,20 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
       )}
       <div className="player__equalizer">
         <img className="player__eq-bg" src={equalizerBg} alt="" />
-        <Equalizer active={isPlaying} />
+        <div
+          className="player__eq-swap"
+          role="button"
+          aria-label="Switch equalizer style"
+          onClick={() => {
+            const next = eqStyle === 'blocks' ? 'lib' : 'blocks';
+            setEqStyle(next);
+            try {
+              localStorage.setItem(EQ_STYLE_KEY, next);
+            } catch {}
+          }}
+        >
+          {eqStyle === 'lib' ? <EqualizerLib /> : <Equalizer active={isPlaying} />}
+        </div>
       </div>
       <div className="player__timeline-row">
         <span className="player__time">{formatTime(currentTime)}</span>
