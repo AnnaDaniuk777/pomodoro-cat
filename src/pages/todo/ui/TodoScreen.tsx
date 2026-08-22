@@ -81,7 +81,7 @@ export function TodoScreen({ onBack }: TodoScreenProps) {
     <div className="screen">
       <img className="screen__bg" src={playerBg} alt="" />
       <Titlebar />
-      <img className="player__header" src={todoHeader} alt="" />
+      <img className="todo__header" src={todoHeader} alt="" />
       <IconButton
         icon={backBtn}
         alt="Back"

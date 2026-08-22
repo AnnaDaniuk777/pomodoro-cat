@@ -1,4 +1,4 @@
-.player__header {
+.todo__header {
   position: absolute;
   top: calc(21px * var(--screen-scale));
   left: calc(9px * var(--screen-scale));

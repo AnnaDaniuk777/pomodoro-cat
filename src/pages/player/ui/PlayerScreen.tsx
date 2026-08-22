@@ -85,7 +85,7 @@ function Equalizer({ active }: { active: boolean }) {
     const peakAt = new Array<number>(count).fill(0);
     const baseline = EQ_HEIGHT - 1;
     const pitch = EQ_SEGMENT + EQ_GAP;
-    const slots = Math.floor((baseline - 1) / pitch);
+    const slots = Math.floor(baseline / pitch);
     let raf = 0;
 
     const draw = (now: number) => {
