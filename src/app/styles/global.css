@@ -177,6 +177,22 @@ img {
   height: calc(12px * var(--ball-scale));
 }
 
+.cat-stage__bowl-anim {
+  position: absolute;
+  left: 42px;
+  top: calc(93px - 34px * var(--bowl-scale));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cat-stage__ball-anim {
+  position: absolute;
+  right: calc(25px - 11px * var(--ball-scale));
+  top: calc(88px - 17px * var(--ball-scale));
+  z-index: 2;
+  pointer-events: none;
+}
+
 .timer-row {
   position: absolute;
   top: 258px;

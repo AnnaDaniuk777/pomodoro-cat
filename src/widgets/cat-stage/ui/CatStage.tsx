@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { Cat, type CatAnimationName } from '@/entities/cat';
 import {
   timerStore,
@@ -8,6 +9,14 @@ import {
 import { IconButton } from '@/shared/ui/IconButton';
 import bowlIcon from '@/shared/assets/elements/bowl-icon.png';
 import ballIcon from '@/shared/assets/elements/ball-icon.png';
+import bowlEatSheet from '@/shared/assets/elements/bowl-eat.png';
+import bowlEatData from '@/shared/assets/elements/bowl-eat.json';
+import ballPlaySheet from '@/shared/assets/elements/ball-play.png';
+import ballPlayData from '@/shared/assets/elements/ball-play.json';
+import { SpriteBurst } from './SpriteBurst';
+
+const BOWL_SCALE = 2;
+const BALL_SCALE = 2.4;
 
 function resolveAnimation(
   status: TimerStatus,
@@ -20,6 +29,10 @@ function resolveAnimation(
 export function CatStage() {
   const { status, mode } = useTimer();
   const animation = resolveAnimation(status, mode);
+  const [bowlBusy, setBowlBusy] = useState(false);
+  const [ballBusy, setBallBusy] = useState(false);
+
+  const working = status === 'running' && mode === 'work';
 
   const toggleTimer = () => {
     if (status === 'running') {
@@ -28,6 +41,9 @@ export function CatStage() {
       timerStore.start();
     }
   };
+
+  const stopBowl = useCallback(() => setBowlBusy(false), []);
+  const stopBall = useCallback(() => setBallBusy(false), []);
 
   return (
     <div className="cat-stage">
@@ -43,16 +59,38 @@ export function CatStage() {
       >
         <Cat animation={animation} />
       </div>
-      <IconButton
-        icon={bowlIcon}
-        ariaLabel="Feed cat"
-        className="cat-stage__bowl"
-      />
-      <IconButton
-        icon={ballIcon}
-        ariaLabel="Play with cat"
-        className="cat-stage__ball"
-      />
+      {bowlBusy ? (
+        <SpriteBurst
+          sheet={bowlEatSheet}
+          data={bowlEatData}
+          scale={BOWL_SCALE}
+          className="cat-stage__bowl-anim"
+          onDone={stopBowl}
+        />
+      ) : (
+        <IconButton
+          icon={bowlIcon}
+          ariaLabel="Feed cat"
+          className="cat-stage__bowl"
+          onClick={working ? undefined : () => setBowlBusy(true)}
+        />
+      )}
+      {ballBusy ? (
+        <SpriteBurst
+          sheet={ballPlaySheet}
+          data={ballPlayData}
+          scale={BALL_SCALE}
+          className="cat-stage__ball-anim"
+          onDone={stopBall}
+        />
+      ) : (
+        <IconButton
+          icon={ballIcon}
+          ariaLabel="Play with cat"
+          className="cat-stage__ball"
+          onClick={working ? undefined : () => setBallBusy(true)}
+        />
+      )}
     </div>
   );
 }
