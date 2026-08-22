@@ -8,7 +8,7 @@ type Point = { clientX: number; clientY: number };
 export function useDragHandle(apply: (point: Point) => void) {
   const applyRef = useRef(apply);
   const stickyRef = useRef<(() => void) | null>(null);
-  const pressRef = useRef({ x: 0, y: 0, moved: false });
+  const pressRef = useRef({ x: 0, y: 0, moved: false, cancelled: false });
 
   useEffect(() => {
     applyRef.current = apply;
@@ -21,40 +21,54 @@ export function useDragHandle(apply: (point: Point) => void) {
 
   useEffect(() => stopFollowing, [stopFollowing]);
 
-  const startFollowing = useCallback((element: Element) => {
-    stopFollowing();
-    const move = (event: MouseEvent) => {
-      const box = element.getBoundingClientRect();
-      const inside =
-        event.clientX >= box.left - FOLLOW_MARGIN &&
-        event.clientX <= box.right + FOLLOW_MARGIN &&
-        event.clientY >= box.top - FOLLOW_MARGIN &&
-        event.clientY <= box.bottom + FOLLOW_MARGIN;
-      if (!inside) {
-        stopFollowing();
-        return;
-      }
-      applyRef.current(event);
-    };
-    const stop = () => stopFollowing();
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mousedown', stop);
-    window.addEventListener('blur', stop);
-    stickyRef.current = () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mousedown', stop);
-      window.removeEventListener('blur', stop);
-    };
-  }, [stopFollowing]);
+  const startFollowing = useCallback(
+    (element: Element) => {
+      stopFollowing();
+      const move = (event: MouseEvent) => {
+        const box = element.getBoundingClientRect();
+        const inside =
+          event.clientX >= box.left - FOLLOW_MARGIN &&
+          event.clientX <= box.right + FOLLOW_MARGIN &&
+          event.clientY >= box.top - FOLLOW_MARGIN &&
+          event.clientY <= box.bottom + FOLLOW_MARGIN;
+        if (!inside) {
+          stopFollowing();
+          return;
+        }
+        applyRef.current(event);
+      };
+      const stop = () => stopFollowing();
+      window.addEventListener('mousemove', move);
+      window.addEventListener('mousedown', stop);
+      window.addEventListener('blur', stop);
+      stickyRef.current = () => {
+        window.removeEventListener('mousemove', move);
+        window.removeEventListener('mousedown', stop);
+        window.removeEventListener('blur', stop);
+      };
+    },
+    [stopFollowing],
+  );
 
   const onPointerDown = useCallback(
     (event: React.PointerEvent) => {
       if (stickyRef.current) {
         stopFollowing();
+        pressRef.current = {
+          x: event.clientX,
+          y: event.clientY,
+          moved: false,
+          cancelled: true,
+        };
         return;
       }
       event.currentTarget.setPointerCapture(event.pointerId);
-      pressRef.current = { x: event.clientX, y: event.clientY, moved: false };
+      pressRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+        moved: false,
+        cancelled: false,
+      };
       applyRef.current(event);
     },
     [stopFollowing],
@@ -74,8 +88,11 @@ export function useDragHandle(apply: (point: Point) => void) {
 
   const onPointerUp = useCallback(
     (event: React.PointerEvent) => {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-      if (!pressRef.current.moved) startFollowing(event.currentTarget);
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      const press = pressRef.current;
+      if (!press.moved && !press.cancelled) startFollowing(event.currentTarget);
     },
     [startFollowing],
   );

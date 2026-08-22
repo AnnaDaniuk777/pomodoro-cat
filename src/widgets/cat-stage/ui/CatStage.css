@@ -59,3 +59,11 @@
   z-index: 2;
   pointer-events: none;
 }
+
+.cat-stage__poof {
+  position: absolute;
+  left: 22px;
+  bottom: 130px;
+  z-index: 2;
+  pointer-events: none;
+}
