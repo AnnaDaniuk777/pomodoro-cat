@@ -27,6 +27,7 @@ function loadRepeat(): boolean {
 }
 
 const PLAYLIST_KEY = 'catodoro-playlist';
+const RESTART_THRESHOLD = 3;
 
 function persistPlaylist() {
   try {
@@ -208,6 +209,10 @@ export const playerStore = {
   },
   prev() {
     if (state.tracks.length === 0) return;
+    if (audio.src && audio.currentTime > RESTART_THRESHOLD) {
+      this.seek(0);
+      return;
+    }
     this.play(
       (state.currentIndex - 1 + state.tracks.length) % state.tracks.length,
     );

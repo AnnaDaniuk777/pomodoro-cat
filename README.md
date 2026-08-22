@@ -44,7 +44,14 @@ Catodoro помогает держать фокус по методике Pomodo
 
 ![Плеер](docs/player.png)
 
-Свой плейлист: добавление треков, play и pause, предыдущий и следующий, громкость колёсиком и перетаскиванием, перемотка удержанием, анимация-эквалайзер и таймлайн с лапкой. Пути треков запоминаются между запусками.
+Свой плейлист: добавление треков, play и pause, эквалайзер по звуку трека и таймлайн с лапкой. Пути треков запоминаются между запусками.
+
+Управление воспроизведением:
+
+- **Перемотка.** Зажми «назад» или «вперёд», и трек будет отматываться, пока держишь кнопку.
+- **Кнопка «назад».** Короткое нажатие возвращает трек в начало, второе подряд переключает на предыдущий.
+- **Позиция в треке.** Тащи лапку по полоске или кликни в нужное место.
+- **Громкость.** Колёсико мыши над иконкой динамика, либо клик по ней и перетаскивание кружка. Клик мимо закрывает регулятор.
 
 #### ✅ Список задач
 
@@ -110,7 +117,14 @@ Work, short break and long break durations, the number of sessions before a long
 
 ![Player](docs/player.png)
 
-Your own playlist: add tracks, play and pause, previous and next, volume by wheel and drag, hold to scrub, an equalizer animation and a timeline with a paw. Track paths are remembered between launches.
+Your own playlist: add tracks, play and pause, an equalizer driven by the track itself and a timeline with a paw. Track paths are remembered between launches.
+
+Playback controls:
+
+- **Scrubbing.** Hold previous or next and the track rewinds while you keep the button down.
+- **Previous button.** A short press restarts the track, a second press switches to the previous one.
+- **Position.** Drag the paw along the bar or click anywhere on it.
+- **Volume.** Scroll over the speaker icon, or click it and drag the knob. Clicking outside closes the slider.
 
 #### ✅ Task list
 
