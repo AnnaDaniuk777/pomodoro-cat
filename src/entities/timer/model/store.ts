@@ -103,10 +103,10 @@ function persist() {
   } catch {}
 }
 
-function notify(body: string) {
+function notify(message: string) {
   if (!state.notificationsEnabled) return;
   try {
-    new Notification('Catodoro', { body });
+    new Notification(message);
   } catch {}
 }
 
