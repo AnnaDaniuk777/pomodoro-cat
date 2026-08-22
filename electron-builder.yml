@@ -44,7 +44,3 @@ mac:
 
 dmg:
   title: Catodoro ${version}
-
-publish:
-  provider: github
-  releaseType: release
