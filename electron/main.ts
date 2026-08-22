@@ -20,6 +20,11 @@ app.setName('Catodoro');
 app.setAppUserModelId('com.annadaniuk.catodoro');
 Menu.setApplicationMenu(null);
 
+const hasSingleInstanceLock = app.requestSingleInstanceLock();
+if (!hasSingleInstanceLock) {
+  app.quit();
+}
+
 function enforceContentSize(
   target: BrowserWindow,
   width: number,
@@ -341,12 +346,21 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  createTray();
-  createWindow();
-  createWidget();
-  createPlayerWidget();
+app.on('second-instance', () => {
+  if (!win) return;
+  if (win.isMinimized()) win.restore();
+  win.show();
+  win.focus();
 });
+
+if (hasSingleInstanceLock) {
+  app.whenReady().then(() => {
+    createTray();
+    createWindow();
+    createWidget();
+    createPlayerWidget();
+  });
+}
 
 app.on('before-quit', () => {
   isQuitting = true;

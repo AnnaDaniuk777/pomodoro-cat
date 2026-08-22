@@ -235,6 +235,21 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
     }
   };
 
+  useEffect(() => {
+    if (!volumeOpen) return;
+    const closeIfOutside = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      const insidePopup = document
+        .querySelector('.player__volume-popup')
+        ?.contains(target);
+      const insideButton = volumeWrapRef.current?.contains(target);
+      if (!insidePopup && !insideButton) setVolumeOpen(false);
+    };
+    window.addEventListener('mousedown', closeIfOutside);
+    return () => window.removeEventListener('mousedown', closeIfOutside);
+  }, [volumeOpen]);
+
   const progress = duration > 0 ? currentTime / duration : 0;
 
   const seekFromPointer = (clientX: number) => {

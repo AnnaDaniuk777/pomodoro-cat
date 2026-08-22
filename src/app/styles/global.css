@@ -60,6 +60,8 @@ body {
 img {
   image-rendering: pixelated;
   display: block;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .screen {
