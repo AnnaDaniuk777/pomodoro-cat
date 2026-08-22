@@ -28,6 +28,8 @@ import trackPauseBtn from '@/shared/assets/player/track-pause-button.png';
 import trackDeleteBtn from '@/shared/assets/todo/trash-light.png';
 
 const EQ_SCALE = 1.6;
+const MARQUEE_PIXELS_PER_SECOND = 15;
+const MARQUEE_TRAVEL_RATIO = 0.76;
 
 function EqualizerAnimation() {
   const frames = useMemo(() => extractFrames(equalizerData), []);
@@ -78,7 +80,8 @@ function TrackName({ name, onClick }: { name: string; onClick: () => void }) {
         const overflow = span.scrollWidth - container.clientWidth;
         if (overflow > 2) {
           const shift = overflow + 8;
-          setMarquee({ shift, duration: Math.max(shift / 30, 1) });
+          const travel = shift / MARQUEE_PIXELS_PER_SECOND / MARQUEE_TRAVEL_RATIO;
+          setMarquee({ shift, duration: Math.max(travel, 2.5) });
         }
       }}
       onMouseLeave={() => {

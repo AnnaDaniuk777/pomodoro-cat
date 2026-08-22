@@ -653,10 +653,12 @@ img {
 }
 
 @keyframes track-marquee {
-  from {
+  0%,
+  12% {
     transform: translateX(0);
   }
-  to {
+  88%,
+  100% {
     transform: translateX(var(--marquee-shift, 0px));
   }
 }
