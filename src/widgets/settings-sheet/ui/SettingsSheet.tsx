@@ -2,6 +2,7 @@ import { playerStore, usePlayer } from '@/entities/player';
 import { timerStore, useTimer } from '@/entities/timer';
 import { i18n, t, useLang } from '@/shared/lib/i18n';
 import { NumberStepper } from '@/shared/ui/NumberStepper';
+import './SettingsSheet.css';
 
 type SettingsSheetProps = {
   onClose: () => void;

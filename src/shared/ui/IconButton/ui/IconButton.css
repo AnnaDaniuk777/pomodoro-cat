@@ -1,0 +1,26 @@
+.icon-btn {
+  position: relative;
+  background: none;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: transform 0.1s ease, filter 0.1s ease;
+  z-index: 3;
+}
+
+.icon-btn:focus,
+.icon-btn:focus-visible {
+  outline: none;
+}
+
+.icon-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}

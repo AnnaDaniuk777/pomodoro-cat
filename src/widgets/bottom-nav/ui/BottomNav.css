@@ -1,0 +1,47 @@
+.bottom-nav {
+  position: absolute;
+  bottom: 27px;
+  left: 78px;
+  gap: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 3;
+}
+
+.bottom-nav__item {
+  position: relative;
+  align-items: center;
+  gap: 2px;
+}
+
+.bottom-nav__btn img {
+  width: var(--nav-btn-size);
+  height: var(--nav-btn-size);
+}
+
+.bottom-nav__foliage {
+  width: var(--nav-foliage-w);
+  height: auto;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bottom-nav__foliage--todo {
+  left: 1px;
+  top: 3px;
+}
+
+.bottom-nav__foliage--music {
+  left: -7px;
+  top: 6px;
+  width: 60px;
+}
+
+.bottom-nav__foliage--settings {
+  left: 2px;
+  top: 4px;
+  width: 50px;
+}

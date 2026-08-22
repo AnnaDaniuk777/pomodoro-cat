@@ -1,0 +1,71 @@
+.stepper {
+  display: flex;
+  align-items: stretch;
+  height: 26px;
+  flex-shrink: 0;
+  border: 2px solid #d8def0;
+  border-radius: 4px;
+  background: #1c1c30;
+  overflow: hidden;
+}
+
+.stepper__input {
+  width: 42px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1;
+  text-align: center;
+  padding: 5px 0 2px;
+  box-sizing: border-box;
+  -webkit-text-stroke: 0.6px var(--text);
+}
+
+.stepper__arrows {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid #d8def0;
+}
+
+.stepper__arrow {
+  flex: 1;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2b2b45;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.stepper__arrow + .stepper__arrow {
+  border-top: 2px solid #d8def0;
+}
+
+.stepper__arrow:hover {
+  background: #3d3d63;
+}
+
+.stepper__arrow:active {
+  background: #16162a;
+}
+
+.stepper__arrow::before {
+  content: '';
+  display: block;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.stepper__arrow--up::before {
+  border-bottom: 6px solid var(--text);
+}
+
+.stepper__arrow--down::before {
+  border-top: 6px solid var(--text);
+}

@@ -1,0 +1,61 @@
+.cat-stage {
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.cat-stage__cat {
+  display: block;
+  position: absolute;
+  left: 28px;
+  bottom: 132px;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.cat-stage__cat--chill {
+  bottom: 141px;
+}
+
+.cat-stage__bowl {
+  position: absolute;
+  left: 42px;
+  top: 93px;
+  z-index: 2;
+}
+
+.cat-stage__bowl img {
+  width: calc(23px * var(--bowl-scale));
+  height: calc(11px * var(--bowl-scale));
+}
+
+.cat-stage__ball {
+  position: absolute;
+  right: 25px;
+  top: 88px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.cat-stage__ball img {
+  width: calc(15px * var(--ball-scale));
+  height: calc(12px * var(--ball-scale));
+}
+
+.cat-stage__bowl-anim {
+  position: absolute;
+  left: 42px;
+  top: calc(93px - 34px * var(--bowl-scale));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cat-stage__ball-anim {
+  position: absolute;
+  right: calc(25px - 11px * var(--ball-scale));
+  top: calc(88px - 17px * var(--ball-scale));
+  z-index: 2;
+  pointer-events: none;
+}

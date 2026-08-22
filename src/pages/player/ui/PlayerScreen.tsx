@@ -22,6 +22,7 @@ import pawThumb from '@/shared/assets/player/paw-thumb.png';
 import trackPlayBtn from '@/shared/assets/player/track-play-button.png';
 import trackPauseBtn from '@/shared/assets/player/track-pause-button.png';
 import trackDeleteBtn from '@/shared/assets/todo/trash-light.png';
+import './PlayerScreen.css';
 
 const MARQUEE_PIXELS_PER_SECOND = 15;
 const MARQUEE_TRAVEL_RATIO = 0.76;

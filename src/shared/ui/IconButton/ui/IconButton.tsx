@@ -1,3 +1,4 @@
+import './IconButton.css';
 type IconButtonProps = {
   icon: string;
   alt?: string;

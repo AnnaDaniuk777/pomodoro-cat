@@ -14,6 +14,7 @@ import bowlEatData from '@/shared/assets/elements/bowl-eat.json';
 import ballPlaySheet from '@/shared/assets/elements/ball-play.png';
 import ballPlayData from '@/shared/assets/elements/ball-play.json';
 import { SpriteBurst } from './SpriteBurst';
+import './CatStage.css';
 
 const BOWL_SCALE = 2;
 const BALL_SCALE = 2.4;

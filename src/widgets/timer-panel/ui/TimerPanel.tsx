@@ -4,6 +4,7 @@ import timeBg from '@/shared/assets/elements/time-background.png';
 import startBtn from '@/shared/assets/elements/start-timer-button.png';
 import pauseBtn from '@/shared/assets/elements/pause-timer-button.png';
 import restartBtn from '@/shared/assets/elements/restart-timer-button.png';
+import './TimerPanel.css';
 
 function formatTime(totalSeconds: number): string {
   const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
