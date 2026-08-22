@@ -290,3 +290,10 @@
   z-index: 14;
   -webkit-app-region: no-drag;
 }
+
+.player__eq-switch {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
