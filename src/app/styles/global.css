@@ -505,16 +505,22 @@ img {
 }
 
 .player__eq-static,
-.player__eq-anim {
+.player__eq-anim,
+.player__eq-canvas {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
 
-.player__eq-static {
+.player__eq-static,
+.player__eq-canvas {
   width: calc(175px * var(--screen-scale));
   height: calc(36px * var(--screen-scale));
+}
+
+.player__eq-canvas {
+  image-rendering: pixelated;
 }
 
 .player__timeline-row {

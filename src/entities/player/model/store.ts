@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { electronApi } from '@/shared/lib/electron-api';
+import { attachSpectrum } from '../lib/spectrum';
 
 export type Track = {
   name: string;
@@ -182,6 +183,7 @@ export const playerStore = {
       audio.src = track.url;
       setState({ currentTime: 0, duration: 0 });
     }
+    attachSpectrum(audio);
     void audio.play().catch(() => {});
     setState({ currentIndex: index, isPlaying: true });
   },
@@ -192,6 +194,7 @@ export const playerStore = {
       return;
     }
     if (audio.paused) {
+      attachSpectrum(audio);
       void audio.play().catch(() => {});
       setState({ isPlaying: true });
     } else {

@@ -1,6 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
-import { extractFrames, useSpriteAnimation } from '@/entities/cat';
-import { playerStore, usePlayer } from '@/entities/player';
+import { useEffect, useRef, useState } from 'react';
+import { playerStore, readSpectrum, usePlayer } from '@/entities/player';
 import { Titlebar } from '@/widgets/titlebar';
 import { IconButton } from '@/shared/ui/IconButton';
 import playerBg from '@/shared/assets/player/music-screen-background.png';
@@ -17,9 +16,6 @@ import volumeTrackEmpty from '@/shared/assets/player/volume-track-empty.png';
 import volumeTrackFilled from '@/shared/assets/player/volume-track-filled.png';
 import volumeThumb from '@/shared/assets/player/volume-thumb.png';
 import equalizerBg from '@/shared/assets/player/equalizer-bg.png';
-import equalizerStatic from '@/shared/assets/player/equalizer-static.png';
-import equalizerSheet from '@/shared/assets/player/equalizer.png';
-import equalizerData from '@/shared/assets/player/equalizer.json';
 import timelineEmpty from '@/shared/assets/player/timeline-empty.png';
 import timelineFilled from '@/shared/assets/player/timeline-filled.png';
 import pawThumb from '@/shared/assets/player/paw-thumb.png';
@@ -27,28 +23,114 @@ import trackPlayBtn from '@/shared/assets/player/track-play-button.png';
 import trackPauseBtn from '@/shared/assets/player/track-pause-button.png';
 import trackDeleteBtn from '@/shared/assets/todo/trash-light.png';
 
-const EQ_SCALE = 1.6;
 const MARQUEE_PIXELS_PER_SECOND = 15;
 const MARQUEE_TRAVEL_RATIO = 0.76;
 
-function EqualizerAnimation() {
-  const frames = useMemo(() => extractFrames(equalizerData), []);
-  const current = useSpriteAnimation({ frames, loop: true });
-  const { x, w, h } = { x: current.frame.x, w: current.frame.w, h: current.frame.h };
-  const { w: sheetW, h: sheetH } = equalizerData.meta.size;
+const EQ_WIDTH = 175;
+const EQ_HEIGHT = 36;
+const EQ_SEGMENT = 2;
+const EQ_GAP = 1;
+const EQ_PEAK_HOLD = 420;
+const EQ_PEAK_FALL = 0.00055;
+const EQ_BARS = [
+  { x: 1, w: 17, color: '#d69887' },
+  { x: 19, w: 17, color: '#e1a796' },
+  { x: 37, w: 17, color: '#e5b4a1' },
+  { x: 55, w: 17, color: '#eec1ab' },
+  { x: 73, w: 14, color: '#f5caaf' },
+  { x: 88, w: 14, color: '#f2d2bf' },
+  { x: 103, w: 17, color: '#f6ddcd' },
+  { x: 121, w: 17, color: '#efd4bf' },
+  { x: 139, w: 17, color: '#e5d0b5' },
+  { x: 157, w: 17, color: '#d9c6a8' },
+];
+
+function mixToWhite(hex: string, amount: number) {
+  const value = parseInt(hex.slice(1), 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  const lift = (channel: number) =>
+    Math.round(channel + (255 - channel) * amount);
+  return `rgb(${lift(r)}, ${lift(g)}, ${lift(b)})`;
+}
+
+function Equalizer({ active }: { active: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const count = EQ_BARS.length;
+    const levels = new Array<number>(count).fill(0);
+    const shown = new Array<number>(count).fill(0);
+    const peaks = new Array<number>(count).fill(0);
+    const peakAt = new Array<number>(count).fill(0);
+    const baseline = EQ_HEIGHT - 1;
+    const pitch = EQ_SEGMENT + EQ_GAP;
+    const slots = Math.floor((baseline - 1) / pitch);
+    let raf = 0;
+
+    const draw = (now: number) => {
+      if (active && !readSpectrum(count, levels)) {
+        for (let i = 0; i < count; i += 1) {
+          const wave =
+            Math.sin(now / 340 + i * 0.8) * 0.3 +
+            Math.sin(now / 150 + i * 2.1) * 0.18;
+          levels[i] = 0.42 + wave;
+        }
+      }
+      if (!active) levels.fill(0);
+
+      let moving = false;
+      ctx.clearRect(0, 0, EQ_WIDTH, EQ_HEIGHT);
+
+      for (let i = 0; i < count; i += 1) {
+        const target = Math.min(1, Math.max(0, levels[i]));
+        const rising = target > shown[i];
+        if (Math.abs(target - shown[i]) > 0.004) moving = true;
+        shown[i] += (target - shown[i]) * (rising ? 0.5 : 0.11);
+
+        if (shown[i] >= peaks[i]) {
+          peaks[i] = shown[i];
+          peakAt[i] = now;
+        } else if (now - peakAt[i] > EQ_PEAK_HOLD) {
+          peaks[i] = Math.max(0, peaks[i] - (now - peakAt[i]) * EQ_PEAK_FALL);
+          moving = true;
+        }
+
+        const bar = EQ_BARS[i];
+        const lit = Math.max(1, Math.round(shown[i] * slots));
+        for (let s = 0; s < lit; s += 1) {
+          const top = baseline - (s + 1) * pitch + EQ_GAP;
+          const warmth = slots > 1 ? s / (slots - 1) : 0;
+          ctx.fillStyle = mixToWhite(bar.color, warmth * 0.35);
+          ctx.fillRect(bar.x, top, bar.w, EQ_SEGMENT);
+        }
+
+        const peakSlot = Math.round(peaks[i] * slots);
+        if (peakSlot > lit) {
+          const top = baseline - peakSlot * pitch + EQ_GAP;
+          ctx.fillStyle = mixToWhite(bar.color, 0.62);
+          ctx.fillRect(bar.x, top, bar.w, 1);
+        }
+      }
+
+      if (active || moving) raf = requestAnimationFrame(draw);
+    };
+
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
+  }, [active]);
 
   return (
-    <div
-      className="player__eq-anim"
-      style={{
-        width: w * EQ_SCALE,
-        height: h * EQ_SCALE,
-        backgroundImage: `url(${equalizerSheet})`,
-        backgroundPosition: `-${x * EQ_SCALE}px 0px`,
-        backgroundSize: `${sheetW * EQ_SCALE}px ${sheetH * EQ_SCALE}px`,
-        backgroundRepeat: 'no-repeat',
-        imageRendering: 'pixelated',
-      }}
+    <canvas
+      ref={canvasRef}
+      className="player__eq-canvas"
+      width={EQ_WIDTH}
+      height={EQ_HEIGHT}
     />
   );
 }
@@ -284,11 +366,7 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
       )}
       <div className="player__equalizer">
         <img className="player__eq-bg" src={equalizerBg} alt="" />
-        {isPlaying ? (
-          <EqualizerAnimation />
-        ) : (
-          <img className="player__eq-static" src={equalizerStatic} alt="" />
-        )}
+        <Equalizer active={isPlaying} />
       </div>
       <div className="player__timeline-row">
         <span className="player__time">{formatTime(currentTime)}</span>
