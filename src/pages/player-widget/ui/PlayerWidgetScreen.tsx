@@ -21,6 +21,7 @@ import progressFilled from '@/shared/assets/player-widget/progress-filled.png';
 import pawImg from '@/shared/assets/player-widget/paw.png';
 import closeBtn from '@/shared/assets/player-widget/close-button.png';
 import restoreBtn from '@/shared/assets/player-widget/restore-button.png';
+import './PlayerWidgetScreen.css';
 
 export function PlayerWidgetScreen() {
   const [player, setPlayer] = useState<WidgetPlayerState>({

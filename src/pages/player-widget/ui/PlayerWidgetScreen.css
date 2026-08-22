@@ -1,0 +1,202 @@
+.pwidget__window-btn:hover,
+.pwidget__window-btn:active {
+  transform: none;
+  filter: none;
+}
+
+.pwidget {
+  position: relative;
+  width: 314px;
+  height: 240px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.pwidget__cat {
+  position: absolute;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(46px * 1.3);
+  height: calc(33px * 1.3);
+  image-rendering: pixelated;
+  z-index: 5;
+  pointer-events: none;
+  transition: bottom 0.45s ease-in-out, left 0.45s ease-in-out;
+}
+
+.pwidget__cat--on-slider {
+  bottom: 172px;
+}
+
+.pwidget__window-btns {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 3;
+}
+
+.pwidget__window-btn img {
+  width: calc(17px * 1.3);
+  height: calc(10px * 1.3);
+}
+
+.pwidget__panel {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 94px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  overflow: hidden;
+  z-index: 2;
+  cursor: grab;
+}
+
+.pwidget__controls {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pwidget__controls .icon-btn {
+  min-width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pwidget__nav img {
+  width: calc(15px * 1.3);
+  height: calc(16px * 1.3);
+}
+
+.pwidget__play img {
+  width: calc(28px * 1.3);
+  height: calc(29px * 1.3);
+}
+
+.pwidget__volume-btn img {
+  width: calc(20px * 1.3);
+  height: calc(27px * 1.3);
+}
+
+.pwidget__folder img {
+  width: calc(27px * 1.3);
+  height: calc(23px * 1.3);
+}
+
+.pwidget__timeline {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 8px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.pwidget__timeline-empty {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: calc(5px * 1.3);
+}
+
+.pwidget__timeline-filled-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.pwidget__timeline-filled {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 266px;
+  height: calc(5px * 1.3);
+}
+
+.pwidget__paw {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(11px * 1.3);
+  height: calc(11px * 1.3);
+  pointer-events: none;
+}
+
+.pwidget__volume-popup {
+  position: absolute;
+  bottom: 90px;
+  transform: translateX(-50%);
+  width: calc(33px * 1.3);
+  height: calc(72px * 1.3);
+  z-index: 4;
+  cursor: pointer;
+}
+
+.pwidget__volume-popup-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.pwidget__volume-track {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  transform: translateX(-50%);
+  width: calc(5px * 1.3);
+  height: calc(60px * 1.3);
+  pointer-events: none;
+}
+
+.pwidget__volume-empty {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pwidget__volume-filled-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.pwidget__volume-filled {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: calc(5px * 1.3);
+  height: calc(61px * 1.3);
+}
+
+.pwidget__volume-thumb {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(11px * 1.3);
+  height: calc(11px * 1.3);
+  pointer-events: none;
+}

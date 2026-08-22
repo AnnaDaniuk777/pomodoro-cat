@@ -5,6 +5,7 @@ import settingsBtn from '@/shared/assets/elements/settings-button.png';
 import todoFoliage from '@/shared/assets/elements/todo-foliage.png';
 import musicFoliage from '@/shared/assets/elements/music-foliage.png';
 import settingsFoliage from '@/shared/assets/elements/settings-foliage.png';
+import './BottomNav.css';
 
 type BottomNavProps = {
   onSettingsClick?: () => void;

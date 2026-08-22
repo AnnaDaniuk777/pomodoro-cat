@@ -1,0 +1,26 @@
+.widget {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.widget__sprite {
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 82px;
+  height: 82px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.widget__ring {
+  position: absolute;
+  inset: 0;
+  width: 84px;
+  height: 84px;
+  pointer-events: none;
+}

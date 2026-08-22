@@ -2,6 +2,7 @@ import { IconButton } from '@/shared/ui/IconButton';
 import { electronApi } from '@/shared/lib/electron-api';
 import closeBtn from '@/shared/assets/elements/close-button.png';
 import minimizeBtn from '@/shared/assets/elements/minimize-button.png';
+import './Titlebar.css';
 
 export function Titlebar() {
   return (

@@ -9,6 +9,7 @@ import {
   type WidgetTimerState,
 } from '@/shared/lib/electron-api';
 import { progressColor } from '@/shared/lib/tray-icon';
+import './WidgetScreen.css';
 
 const RING_RADIUS = 39;
 const RING_LENGTH = 2 * Math.PI * RING_RADIUS;

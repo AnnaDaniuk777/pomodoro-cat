@@ -1,6 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
-import { extractFrames, useSpriteAnimation } from '@/entities/cat';
-import { playerStore, usePlayer } from '@/entities/player';
+import { useEffect, useRef, useState } from 'react';
+import { playerStore, readSpectrum, usePlayer } from '@/entities/player';
 import { Titlebar } from '@/widgets/titlebar';
 import { IconButton } from '@/shared/ui/IconButton';
 import playerBg from '@/shared/assets/player/music-screen-background.png';
@@ -17,36 +16,135 @@ import volumeTrackEmpty from '@/shared/assets/player/volume-track-empty.png';
 import volumeTrackFilled from '@/shared/assets/player/volume-track-filled.png';
 import volumeThumb from '@/shared/assets/player/volume-thumb.png';
 import equalizerBg from '@/shared/assets/player/equalizer-bg.png';
-import equalizerStatic from '@/shared/assets/player/equalizer-static.png';
-import equalizerSheet from '@/shared/assets/player/equalizer.png';
-import equalizerData from '@/shared/assets/player/equalizer.json';
 import timelineEmpty from '@/shared/assets/player/timeline-empty.png';
 import timelineFilled from '@/shared/assets/player/timeline-filled.png';
 import pawThumb from '@/shared/assets/player/paw-thumb.png';
 import trackPlayBtn from '@/shared/assets/player/track-play-button.png';
 import trackPauseBtn from '@/shared/assets/player/track-pause-button.png';
 import trackDeleteBtn from '@/shared/assets/todo/trash-light.png';
+import './PlayerScreen.css';
 
-const EQ_SCALE = 1.6;
+const MARQUEE_PIXELS_PER_SECOND = 15;
+const MARQUEE_TRAVEL_RATIO = 0.76;
 
-function EqualizerAnimation() {
-  const frames = useMemo(() => extractFrames(equalizerData), []);
-  const current = useSpriteAnimation({ frames, loop: true });
-  const { x, w, h } = { x: current.frame.x, w: current.frame.w, h: current.frame.h };
-  const { w: sheetW, h: sheetH } = equalizerData.meta.size;
+const EQ_WIDTH = 175;
+const EQ_HEIGHT = 36;
+const EQ_SEGMENT = 3;
+const EQ_GAP = 2;
+const EQ_PEAK_HOLD = 500;
+const EQ_PEAK_FALL = 0.00045;
+const EQ_BARS = [
+  { x: 1, w: 17 },
+  { x: 19, w: 17 },
+  { x: 37, w: 17 },
+  { x: 55, w: 17 },
+  { x: 73, w: 14 },
+  { x: 88, w: 14 },
+  { x: 103, w: 17 },
+  { x: 121, w: 17 },
+  { x: 139, w: 17 },
+  { x: 157, w: 17 },
+];
+const EQ_RAMP = [
+  { at: 0, rgb: [198, 132, 118] },
+  { at: 0.4, rgb: [225, 167, 150] },
+  { at: 0.72, rgb: [242, 210, 191] },
+  { at: 1, rgb: [250, 233, 216] },
+];
+const EQ_PEAK_COLOR = 'rgb(255, 247, 238)';
+
+function rampColor(position: number) {
+  let from = EQ_RAMP[0];
+  let to = EQ_RAMP[EQ_RAMP.length - 1];
+  for (let i = 0; i < EQ_RAMP.length - 1; i += 1) {
+    if (position >= EQ_RAMP[i].at && position <= EQ_RAMP[i + 1].at) {
+      from = EQ_RAMP[i];
+      to = EQ_RAMP[i + 1];
+      break;
+    }
+  }
+  const span = to.at - from.at || 1;
+  const t = Math.min(1, Math.max(0, (position - from.at) / span));
+  const channel = (i: number) =>
+    Math.round(from.rgb[i] + (to.rgb[i] - from.rgb[i]) * t);
+  return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
+}
+
+function Equalizer({ active }: { active: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const count = EQ_BARS.length;
+    const levels = new Array<number>(count).fill(0);
+    const shown = new Array<number>(count).fill(0);
+    const peaks = new Array<number>(count).fill(0);
+    const peakAt = new Array<number>(count).fill(0);
+    const baseline = EQ_HEIGHT - 1;
+    const pitch = EQ_SEGMENT + EQ_GAP;
+    const slots = Math.floor(baseline / pitch);
+    let raf = 0;
+
+    const draw = (now: number) => {
+      if (active && !readSpectrum(count, levels)) {
+        for (let i = 0; i < count; i += 1) {
+          const wave =
+            Math.sin(now / 340 + i * 0.8) * 0.3 +
+            Math.sin(now / 150 + i * 2.1) * 0.18;
+          levels[i] = 0.42 + wave;
+        }
+      }
+      if (!active) levels.fill(0);
+
+      let moving = false;
+      ctx.clearRect(0, 0, EQ_WIDTH, EQ_HEIGHT);
+
+      for (let i = 0; i < count; i += 1) {
+        const target = Math.min(1, Math.max(0, levels[i]));
+        const rising = target > shown[i];
+        if (Math.abs(target - shown[i]) > 0.004) moving = true;
+        shown[i] += (target - shown[i]) * (rising ? 0.5 : 0.11);
+
+        if (shown[i] >= peaks[i]) {
+          peaks[i] = shown[i];
+          peakAt[i] = now;
+        } else if (now - peakAt[i] > EQ_PEAK_HOLD) {
+          peaks[i] = Math.max(0, peaks[i] - (now - peakAt[i]) * EQ_PEAK_FALL);
+          moving = true;
+        }
+
+        const bar = EQ_BARS[i];
+        const lit = Math.max(1, Math.round(shown[i] * slots));
+        for (let s = 0; s < lit; s += 1) {
+          const top = baseline - (s + 1) * pitch + EQ_GAP;
+          ctx.fillStyle = rampColor(slots > 1 ? s / (slots - 1) : 0);
+          ctx.fillRect(bar.x, top, bar.w, EQ_SEGMENT);
+        }
+
+        const peakSlot = Math.round(peaks[i] * slots);
+        if (peakSlot > lit) {
+          const top = baseline - peakSlot * pitch + EQ_GAP;
+          ctx.fillStyle = EQ_PEAK_COLOR;
+          ctx.fillRect(bar.x, top, bar.w, EQ_SEGMENT);
+        }
+      }
+
+      if (active || moving) raf = requestAnimationFrame(draw);
+    };
+
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
+  }, [active]);
 
   return (
-    <div
-      className="player__eq-anim"
-      style={{
-        width: w * EQ_SCALE,
-        height: h * EQ_SCALE,
-        backgroundImage: `url(${equalizerSheet})`,
-        backgroundPosition: `-${x * EQ_SCALE}px 0px`,
-        backgroundSize: `${sheetW * EQ_SCALE}px ${sheetH * EQ_SCALE}px`,
-        backgroundRepeat: 'no-repeat',
-        imageRendering: 'pixelated',
-      }}
+    <canvas
+      ref={canvasRef}
+      className="player__eq-canvas"
+      width={EQ_WIDTH}
+      height={EQ_HEIGHT}
     />
   );
 }
@@ -78,7 +176,8 @@ function TrackName({ name, onClick }: { name: string; onClick: () => void }) {
         const overflow = span.scrollWidth - container.clientWidth;
         if (overflow > 2) {
           const shift = overflow + 8;
-          setMarquee({ shift, duration: Math.max(shift / 30, 1) });
+          const travel = shift / MARQUEE_PIXELS_PER_SECOND / MARQUEE_TRAVEL_RATIO;
+          setMarquee({ shift, duration: Math.max(travel, 2.5) });
         }
       }}
       onMouseLeave={() => {
@@ -113,9 +212,10 @@ function formatTime(seconds: number): string {
 
 type PlayerScreenProps = {
   onBack: () => void;
+  visible?: boolean;
 };
 
-export function PlayerScreen({ onBack }: PlayerScreenProps) {
+export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
   const { tracks, currentIndex, isPlaying, currentTime, duration, volume } =
     usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
@@ -281,11 +381,7 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
       )}
       <div className="player__equalizer">
         <img className="player__eq-bg" src={equalizerBg} alt="" />
-        {isPlaying ? (
-          <EqualizerAnimation />
-        ) : (
-          <img className="player__eq-static" src={equalizerStatic} alt="" />
-        )}
+        <Equalizer active={isPlaying && visible} />
       </div>
       <div className="player__timeline-row">
         <span className="player__time">{formatTime(currentTime)}</span>
