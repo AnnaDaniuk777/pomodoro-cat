@@ -39,7 +39,7 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: false,
       dx: 12,
       dy: 1,
-      squash: [1, 0.9646],
+      squash: [1, 0.955],
     },
     {
       sheet: playCycleSheet,
@@ -47,7 +47,7 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: true,
       dx: 0,
       dy: 1,
-      squash: [1, 0.9646],
+      squash: [1, 0.955],
     },
   ],
   chill: [
