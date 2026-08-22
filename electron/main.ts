@@ -17,7 +17,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL;
 
 app.setName('Catodoro');
-app.setAppUserModelId('Catodoro');
+app.setAppUserModelId('com.annadaniuk.catodoro');
 Menu.setApplicationMenu(null);
 
 function enforceContentSize(
