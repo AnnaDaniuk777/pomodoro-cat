@@ -28,6 +28,43 @@ import './PlayerScreen.css';
 const MARQUEE_PIXELS_PER_SECOND = 15;
 const MARQUEE_TRAVEL_RATIO = 0.76;
 
+const EQ_STYLE_KEY = 'catodoro-eq-style';
+const EQ_BASE = {
+  ledBars: false,
+  lumiBars: false,
+  roundBars: false,
+  outlineBars: false,
+  alphaBars: false,
+  showPeaks: false,
+  reflexRatio: 0,
+  mirror: 0 as const,
+  radial: false,
+  fillAlpha: 1,
+  lineWidth: 0,
+  barSpace: 0.25,
+};
+const EQ_STYLES = [
+  { mode: 8, ledBars: true, showPeaks: true },
+  { mode: 7, ledBars: true, showPeaks: true },
+  { mode: 7, showPeaks: true, barSpace: 0.2 },
+  { mode: 7, roundBars: true, barSpace: 0.3 },
+  { mode: 7, reflexRatio: 0.35, reflexAlpha: 0.3, barSpace: 0.2 },
+  { mode: 7, lumiBars: true, barSpace: 0.2 },
+  { mode: 7, outlineBars: true, lineWidth: 1.5, fillAlpha: 0.3 },
+  { mode: 10, fillAlpha: 0.4, lineWidth: 2 },
+  { mode: 7, ledBars: true, showPeaks: true, mirror: 1 as const },
+  { mode: 7, alphaBars: true, barSpace: 0.2 },
+];
+
+function loadEqStyle(): number {
+  try {
+    const raw = Number(localStorage.getItem(EQ_STYLE_KEY));
+    return Number.isInteger(raw) && raw >= 0 && raw < EQ_STYLES.length ? raw : 0;
+  } catch {
+    return 0;
+  }
+}
+
 const EQ_GRADIENT = {
   bgColor: "#242641",
   colorStops: [
@@ -38,9 +75,14 @@ const EQ_GRADIENT = {
   ],
 };
 
-function Equalizer({ active }: { active: boolean }) {
+type Analyzer = {
+  destroy: () => void;
+  setOptions: (options: Record<string, unknown>) => void;
+};
+
+function Equalizer({ active, style }: { active: boolean; style: number }) {
   const holderRef = useRef<HTMLDivElement>(null);
-  const analyzerRef = useRef<{ destroy: () => void } | null>(null);
+  const analyzerRef = useRef<Analyzer | null>(null);
 
   useEffect(
     () => () => {
@@ -63,30 +105,32 @@ function Equalizer({ active }: { active: boolean }) {
         audioCtx: graph.context,
         source: graph.source,
         connectSpeakers: false,
-        mode: 8,
-        ledBars: true,
-        showPeaks: true,
         overlay: true,
         showBgColor: false,
         showScaleX: false,
         showScaleY: false,
-        barSpace: 0.25,
         smoothing: 0.65,
         minDecibels: -70,
         maxDecibels: -26,
         minFreq: 45,
         maxFreq: 14000,
         weightingFilter: "D",
+        ...EQ_BASE,
+        ...EQ_STYLES[style],
       });
       instance.registerGradient("catodoro", EQ_GRADIENT);
       instance.gradient = "catodoro";
-      analyzerRef.current = instance as unknown as { destroy: () => void };
+      analyzerRef.current = instance as unknown as Analyzer;
     });
 
     return () => {
       dropped = true;
     };
-  }, [active]);
+  }, [active, style]);
+
+  useEffect(() => {
+    analyzerRef.current?.setOptions({ ...EQ_BASE, ...EQ_STYLES[style] });
+  }, [style]);
 
   return (
     <div
@@ -166,6 +210,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
   const { tracks, currentIndex, isPlaying, currentTime, duration, volume } =
     usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
+  const [eqStyle, setEqStyle] = useState(loadEqStyle);
   const [volumeCenter, setVolumeCenter] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -343,7 +388,19 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
       )}
       <div className="player__equalizer">
         <img className="player__eq-bg" src={equalizerBg} alt="" />
-        <Equalizer active={isPlaying && visible} />
+        <Equalizer active={isPlaying && visible} style={eqStyle} />
+        <div
+          className="player__eq-switch"
+          role="button"
+          aria-label="Change equalizer style"
+          onClick={() => {
+            const next = (eqStyle + 1) % EQ_STYLES.length;
+            setEqStyle(next);
+            try {
+              localStorage.setItem(EQ_STYLE_KEY, String(next));
+            } catch {}
+          }}
+        />
       </div>
       <div className="player__timeline-row">
         <span className="player__time">{formatTime(currentTime)}</span>
