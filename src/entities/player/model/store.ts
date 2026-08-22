@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useStoreSelector } from '@/shared/lib/store';
 import { electronApi } from '@/shared/lib/electron-api';
 import { attachSpectrum } from '../lib/spectrum';
 
@@ -243,6 +243,8 @@ export const playerStore = {
   },
 };
 
-export function usePlayer(): PlayerState {
-  return useSyncExternalStore(playerStore.subscribe, playerStore.getState);
+export function usePlayer<T = PlayerState>(
+  selector: (state: PlayerState) => T = (state) => state as unknown as T,
+): T {
+  return useStoreSelector(playerStore, selector);
 }

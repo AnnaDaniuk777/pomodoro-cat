@@ -48,7 +48,7 @@ function useTrayIcon() {
 }
 
 function useAlwaysOnTop() {
-  const { alwaysOnTop } = useTimer();
+  const alwaysOnTop = useTimer((state) => state.alwaysOnTop);
   useEffect(() => {
     electronApi.setAlwaysOnTop(alwaysOnTop);
   }, [alwaysOnTop]);

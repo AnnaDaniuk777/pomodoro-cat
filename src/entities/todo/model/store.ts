@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useStoreSelector } from '@/shared/lib/store';
 
 export type TodoTask = {
   id: string;
@@ -80,6 +80,8 @@ export const todoStore = {
   },
 };
 
-export function useTodos(): TodoState {
-  return useSyncExternalStore(todoStore.subscribe, todoStore.getState);
+export function useTodos<T = TodoState>(
+  selector: (state: TodoState) => T = (state) => state as unknown as T,
+): T {
+  return useStoreSelector(todoStore, selector);
 }

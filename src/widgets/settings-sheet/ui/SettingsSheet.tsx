@@ -20,7 +20,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
     notificationsEnabled,
     alwaysOnTop,
   } = useTimer();
-  const { repeatPlaylist } = usePlayer();
+  const repeatPlaylist = usePlayer((state) => state.repeatPlaylist);
   const lang = useLang();
 
   return (

@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useStoreSelector } from '@/shared/lib/store';
 import { playBreakEndChime, playWorkEndChime } from '@/shared/lib/audio';
 import { t } from '@/shared/lib/i18n';
 
@@ -229,6 +229,8 @@ export const timerStore = {
   },
 };
 
-export function useTimer(): TimerState {
-  return useSyncExternalStore(timerStore.subscribe, timerStore.getState);
+export function useTimer<T = TimerState>(
+  selector: (state: TimerState) => T = (state) => state as unknown as T,
+): T {
+  return useStoreSelector(timerStore, selector);
 }

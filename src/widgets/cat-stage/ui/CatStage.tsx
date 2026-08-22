@@ -28,7 +28,8 @@ function resolveAnimation(
 }
 
 export function CatStage() {
-  const { status, mode } = useTimer();
+  const status = useTimer((state) => state.status);
+  const mode = useTimer((state) => state.mode);
   const animation = resolveAnimation(status, mode);
   const [bowlBusy, setBowlBusy] = useState(false);
   const [ballBusy, setBallBusy] = useState(false);
