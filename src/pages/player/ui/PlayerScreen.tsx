@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getAudioGraph, playerStore, usePlayer } from '@/entities/player';
+import { useDragHandle } from '@/shared/lib/drag-handle';
 import { Titlebar } from '@/widgets/titlebar';
 import { IconButton } from '@/shared/ui/IconButton';
 import playerBg from '@/shared/assets/player/music-screen-background.png';
@@ -62,22 +63,19 @@ function Equalizer({ active }: { active: boolean }) {
         audioCtx: graph.context,
         source: graph.source,
         connectSpeakers: false,
-        mode: 5,
+        mode: 8,
         ledBars: true,
         showPeaks: true,
-        peakLine: false,
         overlay: true,
         showBgColor: false,
         showScaleX: false,
         showScaleY: false,
-        barSpace: 0.35,
-        smoothing: 0.7,
-        minDecibels: -76,
-        maxDecibels: -20,
+        barSpace: 0.25,
+        smoothing: 0.65,
+        minDecibels: -70,
+        maxDecibels: -26,
         minFreq: 45,
         maxFreq: 14000,
-        linearAmplitude: true,
-        linearBoost: 1.6,
         weightingFilter: "D",
       });
       instance.registerGradient("catodoro", EQ_GRADIENT);
@@ -208,12 +206,15 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
     playerStore.seek(fraction * duration);
   };
 
-  const volumeFromPointer = (clientY: number) => {
+  const volumeFromPointerY = (clientY: number) => {
     const rect = volumeTrackRef.current?.getBoundingClientRect();
     if (!rect || rect.height === 0) return;
     const fraction = 1 - Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
     playerStore.setVolume(fraction);
   };
+
+  const timelineDrag = useDragHandle(({ clientX }) => seekFromPointer(clientX));
+  const volumeDrag = useDragHandle(({ clientY }) => volumeFromPointerY(clientY));
 
   const holdRef = useRef({ timer: 0, interval: 0, held: false });
 
@@ -314,16 +315,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
           onWheel={(e) =>
             playerStore.setVolume(volume + (e.deltaY < 0 ? 0.05 : -0.05))
           }
-          onPointerDown={(e) => {
-            e.currentTarget.setPointerCapture(e.pointerId);
-            volumeFromPointer(e.clientY);
-          }}
-          onPointerMove={(e) => {
-            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-              volumeFromPointer(e.clientY);
-            }
-          }}
-          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
+          {...volumeDrag}
         >
           <img className="player__volume-popup-bg" src={volumeSliderBg} alt="" />
           <div ref={volumeTrackRef} className="player__volume-track">
@@ -352,16 +344,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
         <div
           ref={timelineRef}
           className="player__timeline"
-          onPointerDown={(e) => {
-            e.currentTarget.setPointerCapture(e.pointerId);
-            seekFromPointer(e.clientX);
-          }}
-          onPointerMove={(e) => {
-            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-              seekFromPointer(e.clientX);
-            }
-          }}
-          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
+          {...timelineDrag}
         >
           <img className="player__timeline-empty" src={timelineEmpty} alt="" />
           <div
