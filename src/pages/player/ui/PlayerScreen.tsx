@@ -28,31 +28,45 @@ const MARQUEE_TRAVEL_RATIO = 0.76;
 
 const EQ_WIDTH = 175;
 const EQ_HEIGHT = 36;
-const EQ_SEGMENT = 2;
-const EQ_GAP = 1;
-const EQ_PEAK_HOLD = 420;
-const EQ_PEAK_FALL = 0.00055;
+const EQ_SEGMENT = 3;
+const EQ_GAP = 2;
+const EQ_PEAK_HOLD = 500;
+const EQ_PEAK_FALL = 0.00045;
 const EQ_BARS = [
-  { x: 1, w: 17, color: '#d69887' },
-  { x: 19, w: 17, color: '#e1a796' },
-  { x: 37, w: 17, color: '#e5b4a1' },
-  { x: 55, w: 17, color: '#eec1ab' },
-  { x: 73, w: 14, color: '#f5caaf' },
-  { x: 88, w: 14, color: '#f2d2bf' },
-  { x: 103, w: 17, color: '#f6ddcd' },
-  { x: 121, w: 17, color: '#efd4bf' },
-  { x: 139, w: 17, color: '#e5d0b5' },
-  { x: 157, w: 17, color: '#d9c6a8' },
+  { x: 1, w: 17 },
+  { x: 19, w: 17 },
+  { x: 37, w: 17 },
+  { x: 55, w: 17 },
+  { x: 73, w: 14 },
+  { x: 88, w: 14 },
+  { x: 103, w: 17 },
+  { x: 121, w: 17 },
+  { x: 139, w: 17 },
+  { x: 157, w: 17 },
 ];
+const EQ_RAMP = [
+  { at: 0, rgb: [198, 132, 118] },
+  { at: 0.4, rgb: [225, 167, 150] },
+  { at: 0.72, rgb: [242, 210, 191] },
+  { at: 1, rgb: [250, 233, 216] },
+];
+const EQ_PEAK_COLOR = 'rgb(255, 247, 238)';
 
-function mixToWhite(hex: string, amount: number) {
-  const value = parseInt(hex.slice(1), 16);
-  const r = (value >> 16) & 255;
-  const g = (value >> 8) & 255;
-  const b = value & 255;
-  const lift = (channel: number) =>
-    Math.round(channel + (255 - channel) * amount);
-  return `rgb(${lift(r)}, ${lift(g)}, ${lift(b)})`;
+function rampColor(position: number) {
+  let from = EQ_RAMP[0];
+  let to = EQ_RAMP[EQ_RAMP.length - 1];
+  for (let i = 0; i < EQ_RAMP.length - 1; i += 1) {
+    if (position >= EQ_RAMP[i].at && position <= EQ_RAMP[i + 1].at) {
+      from = EQ_RAMP[i];
+      to = EQ_RAMP[i + 1];
+      break;
+    }
+  }
+  const span = to.at - from.at || 1;
+  const t = Math.min(1, Math.max(0, (position - from.at) / span));
+  const channel = (i: number) =>
+    Math.round(from.rgb[i] + (to.rgb[i] - from.rgb[i]) * t);
+  return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
 }
 
 function Equalizer({ active }: { active: boolean }) {
@@ -105,16 +119,15 @@ function Equalizer({ active }: { active: boolean }) {
         const lit = Math.max(1, Math.round(shown[i] * slots));
         for (let s = 0; s < lit; s += 1) {
           const top = baseline - (s + 1) * pitch + EQ_GAP;
-          const warmth = slots > 1 ? s / (slots - 1) : 0;
-          ctx.fillStyle = mixToWhite(bar.color, warmth * 0.35);
+          ctx.fillStyle = rampColor(slots > 1 ? s / (slots - 1) : 0);
           ctx.fillRect(bar.x, top, bar.w, EQ_SEGMENT);
         }
 
         const peakSlot = Math.round(peaks[i] * slots);
         if (peakSlot > lit) {
           const top = baseline - peakSlot * pitch + EQ_GAP;
-          ctx.fillStyle = mixToWhite(bar.color, 0.62);
-          ctx.fillRect(bar.x, top, bar.w, 1);
+          ctx.fillStyle = EQ_PEAK_COLOR;
+          ctx.fillRect(bar.x, top, bar.w, EQ_SEGMENT);
         }
       }
 
