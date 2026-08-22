@@ -25,6 +25,7 @@ type Clip = {
   dx: number;
   dy: number;
   scale?: number;
+  squash?: [number, number];
   durationScale?: number;
   range?: [number, number];
 };
@@ -38,6 +39,7 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: false,
       dx: 12,
       dy: 1,
+      squash: [1, 0.956],
     },
     {
       sheet: playCycleSheet,
@@ -45,6 +47,7 @@ const CLIPS: Record<CatAnimationName, Clip[]> = {
       loop: true,
       dx: 0,
       dy: 1,
+      squash: [1, 0.956],
     },
   ],
   chill: [
@@ -115,7 +118,8 @@ export function Cat({ animation = 'idle' }: CatProps) {
         backgroundSize: `${sheetW * renderScale}px ${sheetH * renderScale}px`,
         backgroundRepeat: 'no-repeat',
         imageRendering: 'pixelated',
-        transform: `translate(${clip.dx * CAT_SCALE}px, ${clip.dy * CAT_SCALE}px)`,
+        transform: `translate(${clip.dx * CAT_SCALE}px, ${clip.dy * CAT_SCALE}px) scale(${clip.squash?.[0] ?? 1}, ${clip.squash?.[1] ?? 1})`,
+        transformOrigin: '50% 100%',
       }}
     />
   );
