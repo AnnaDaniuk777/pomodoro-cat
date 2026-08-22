@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { playerStore, readSpectrum, usePlayer } from '@/entities/player';
+import { getAudioGraph, playerStore, usePlayer } from '@/entities/player';
 import { Titlebar } from '@/widgets/titlebar';
 import { IconButton } from '@/shared/ui/IconButton';
 import playerBg from '@/shared/assets/player/music-screen-background.png';
@@ -27,124 +27,65 @@ import './PlayerScreen.css';
 const MARQUEE_PIXELS_PER_SECOND = 15;
 const MARQUEE_TRAVEL_RATIO = 0.76;
 
-const EQ_WIDTH = 175;
-const EQ_HEIGHT = 36;
-const EQ_SEGMENT = 3;
-const EQ_GAP = 2;
-const EQ_PEAK_HOLD = 500;
-const EQ_PEAK_FALL = 0.00045;
-const EQ_BARS = [
-  { x: 1, w: 17 },
-  { x: 19, w: 17 },
-  { x: 37, w: 17 },
-  { x: 55, w: 17 },
-  { x: 73, w: 14 },
-  { x: 88, w: 14 },
-  { x: 103, w: 17 },
-  { x: 121, w: 17 },
-  { x: 139, w: 17 },
-  { x: 157, w: 17 },
-];
-const EQ_RAMP = [
-  { at: 0, rgb: [198, 132, 118] },
-  { at: 0.4, rgb: [225, 167, 150] },
-  { at: 0.72, rgb: [242, 210, 191] },
-  { at: 1, rgb: [250, 233, 216] },
-];
-const EQ_PEAK_COLOR = 'rgb(255, 247, 238)';
-
-function rampColor(position: number) {
-  let from = EQ_RAMP[0];
-  let to = EQ_RAMP[EQ_RAMP.length - 1];
-  for (let i = 0; i < EQ_RAMP.length - 1; i += 1) {
-    if (position >= EQ_RAMP[i].at && position <= EQ_RAMP[i + 1].at) {
-      from = EQ_RAMP[i];
-      to = EQ_RAMP[i + 1];
-      break;
-    }
-  }
-  const span = to.at - from.at || 1;
-  const t = Math.min(1, Math.max(0, (position - from.at) / span));
-  const channel = (i: number) =>
-    Math.round(from.rgb[i] + (to.rgb[i] - from.rgb[i]) * t);
-  return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
-}
+const EQ_GRADIENT = {
+  bgColor: "#242641",
+  colorStops: [
+    { pos: 0, color: "#c68476" },
+    { pos: 0.42, color: "#e1a796" },
+    { pos: 0.74, color: "#f2d2bf" },
+    { pos: 1, color: "#fdf3e8" },
+  ],
+};
 
 function Equalizer({ active }: { active: boolean }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const holderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const holder = holderRef.current;
+    if (!holder) return;
 
-    const count = EQ_BARS.length;
-    const levels = new Array<number>(count).fill(0);
-    const shown = new Array<number>(count).fill(0);
-    const peaks = new Array<number>(count).fill(0);
-    const peakAt = new Array<number>(count).fill(0);
-    const baseline = EQ_HEIGHT - 1;
-    const pitch = EQ_SEGMENT + EQ_GAP;
-    const slots = Math.floor(baseline / pitch);
-    let raf = 0;
+    let analyzer: { destroy: () => void; gradient: string } | null = null;
+    let dropped = false;
 
-    const draw = (now: number) => {
-      if (active && !readSpectrum(count, levels)) {
-        for (let i = 0; i < count; i += 1) {
-          const wave =
-            Math.sin(now / 340 + i * 0.8) * 0.3 +
-            Math.sin(now / 150 + i * 2.1) * 0.18;
-          levels[i] = 0.42 + wave;
-        }
-      }
-      if (!active) levels.fill(0);
+    void import("audiomotion-analyzer").then(({ default: AudioMotionAnalyzer }) => {
+      if (dropped || !holder.isConnected) return;
+      const graph = getAudioGraph();
+      const instance = new AudioMotionAnalyzer(holder, {
+        ...(graph ? { audioCtx: graph.context, source: graph.source } : {}),
+        connectSpeakers: false,
+        mode: 5,
+        ledBars: true,
+        showPeaks: true,
+        peakLine: false,
+        overlay: true,
+        showBgColor: false,
+        showScaleX: false,
+        showScaleY: false,
+        barSpace: 0.35,
+        smoothing: 0.7,
+        minDecibels: -76,
+        maxDecibels: -20,
+        minFreq: 45,
+        maxFreq: 14000,
+        linearAmplitude: true,
+        linearBoost: 1.6,
+        weightingFilter: "D",
+      });
+      instance.registerGradient("catodoro", EQ_GRADIENT);
+      instance.gradient = "catodoro";
+      analyzer = instance as unknown as { destroy: () => void; gradient: string };
+    });
 
-      let moving = false;
-      ctx.clearRect(0, 0, EQ_WIDTH, EQ_HEIGHT);
-
-      for (let i = 0; i < count; i += 1) {
-        const target = Math.min(1, Math.max(0, levels[i]));
-        const rising = target > shown[i];
-        if (Math.abs(target - shown[i]) > 0.004) moving = true;
-        shown[i] += (target - shown[i]) * (rising ? 0.5 : 0.11);
-
-        if (shown[i] >= peaks[i]) {
-          peaks[i] = shown[i];
-          peakAt[i] = now;
-        } else if (now - peakAt[i] > EQ_PEAK_HOLD) {
-          peaks[i] = Math.max(0, peaks[i] - (now - peakAt[i]) * EQ_PEAK_FALL);
-          moving = true;
-        }
-
-        const bar = EQ_BARS[i];
-        const lit = Math.max(1, Math.round(shown[i] * slots));
-        for (let s = 0; s < lit; s += 1) {
-          const top = baseline - (s + 1) * pitch + EQ_GAP;
-          ctx.fillStyle = rampColor(slots > 1 ? s / (slots - 1) : 0);
-          ctx.fillRect(bar.x, top, bar.w, EQ_SEGMENT);
-        }
-
-        const peakSlot = Math.round(peaks[i] * slots);
-        if (peakSlot > lit) {
-          const top = baseline - peakSlot * pitch + EQ_GAP;
-          ctx.fillStyle = EQ_PEAK_COLOR;
-          ctx.fillRect(bar.x, top, bar.w, EQ_SEGMENT);
-        }
-      }
-
-      if (active || moving) raf = requestAnimationFrame(draw);
+    return () => {
+      dropped = true;
+      analyzer?.destroy();
     };
-
-    raf = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(raf);
-  }, [active]);
+  }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="player__eq-canvas"
-      width={EQ_WIDTH}
-      height={EQ_HEIGHT}
+    <div
+      ref={holderRef}
+      className={active ? "player__eq-lib" : "player__eq-lib player__eq-lib--idle"}
     />
   );
 }

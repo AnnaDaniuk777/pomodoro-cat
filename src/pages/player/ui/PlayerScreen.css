@@ -118,22 +118,6 @@
   height: 100%;
 }
 
-.player__eq-canvas {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.player__eq-canvas {
-  width: calc(175px * var(--screen-scale));
-  height: calc(36px * var(--screen-scale));
-}
-
-.player__eq-canvas {
-  image-rendering: pixelated;
-}
-
 .player__timeline-row {
   position: absolute;
   top: 218px;
@@ -282,4 +266,19 @@
 
 .player__track--active .player__track-name {
   filter: brightness(1.12);
+}
+
+.player__eq-lib {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(171px * var(--screen-scale));
+  height: calc(32px * var(--screen-scale));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.player__eq-lib--idle {
+  opacity: 0.35;
 }
