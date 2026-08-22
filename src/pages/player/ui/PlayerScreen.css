@@ -109,6 +109,7 @@
   width: calc(175px * var(--screen-scale));
   height: calc(36px * var(--screen-scale));
   z-index: 2;
+  -webkit-app-region: no-drag;
 }
 
 .player__eq-bg {

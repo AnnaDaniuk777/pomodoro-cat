@@ -39,19 +39,28 @@ const EQ_GRADIENT = {
 
 function Equalizer({ active }: { active: boolean }) {
   const holderRef = useRef<HTMLDivElement>(null);
+  const analyzerRef = useRef<{ destroy: () => void } | null>(null);
+
+  useEffect(
+    () => () => {
+      analyzerRef.current?.destroy();
+      analyzerRef.current = null;
+    },
+    [],
+  );
 
   useEffect(() => {
     const holder = holderRef.current;
-    if (!holder) return;
+    const graph = getAudioGraph();
+    if (!active || !holder || !graph || analyzerRef.current) return;
 
-    let analyzer: { destroy: () => void; gradient: string } | null = null;
     let dropped = false;
 
     void import("audiomotion-analyzer").then(({ default: AudioMotionAnalyzer }) => {
-      if (dropped || !holder.isConnected) return;
-      const graph = getAudioGraph();
+      if (dropped || analyzerRef.current || !holder.isConnected) return;
       const instance = new AudioMotionAnalyzer(holder, {
-        ...(graph ? { audioCtx: graph.context, source: graph.source } : {}),
+        audioCtx: graph.context,
+        source: graph.source,
         connectSpeakers: false,
         mode: 5,
         ledBars: true,
@@ -73,14 +82,13 @@ function Equalizer({ active }: { active: boolean }) {
       });
       instance.registerGradient("catodoro", EQ_GRADIENT);
       instance.gradient = "catodoro";
-      analyzer = instance as unknown as { destroy: () => void; gradient: string };
+      analyzerRef.current = instance as unknown as { destroy: () => void };
     });
 
     return () => {
       dropped = true;
-      analyzer?.destroy();
     };
-  }, []);
+  }, [active]);
 
   return (
     <div
@@ -306,16 +314,16 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
           onWheel={(e) =>
             playerStore.setVolume(volume + (e.deltaY < 0 ? 0.05 : -0.05))
           }
-          onMouseDown={(e) => {
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId);
             volumeFromPointer(e.clientY);
-            const move = (ev: MouseEvent) => volumeFromPointer(ev.clientY);
-            const up = () => {
-              window.removeEventListener('mousemove', move);
-              window.removeEventListener('mouseup', up);
-            };
-            window.addEventListener('mousemove', move);
-            window.addEventListener('mouseup', up);
           }}
+          onPointerMove={(e) => {
+            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+              volumeFromPointer(e.clientY);
+            }
+          }}
+          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
         >
           <img className="player__volume-popup-bg" src={volumeSliderBg} alt="" />
           <div ref={volumeTrackRef} className="player__volume-track">
@@ -344,16 +352,16 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
         <div
           ref={timelineRef}
           className="player__timeline"
-          onMouseDown={(e) => {
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId);
             seekFromPointer(e.clientX);
-            const move = (ev: MouseEvent) => seekFromPointer(ev.clientX);
-            const up = () => {
-              window.removeEventListener('mousemove', move);
-              window.removeEventListener('mouseup', up);
-            };
-            window.addEventListener('mousemove', move);
-            window.addEventListener('mouseup', up);
           }}
+          onPointerMove={(e) => {
+            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+              seekFromPointer(e.clientX);
+            }
+          }}
+          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
         >
           <img className="player__timeline-empty" src={timelineEmpty} alt="" />
           <div
