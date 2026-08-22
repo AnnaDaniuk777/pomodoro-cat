@@ -146,6 +146,14 @@ There is also a system tray icon (click starts and pauses, double click opens th
 
 ---
 
+## 📦 Установка / Install
+
+Готовые сборки лежат в [релизах](https://github.com/AnnaDaniuk777/pomodoro-cat/releases). / Ready builds live in [releases](https://github.com/AnnaDaniuk777/pomodoro-cat/releases).
+
+**Windows:** скачай `Catodoro-<версия>-windows-x64.exe` и запусти установщик, либо возьми `windows-portable.exe` и запусти без установки. / Download the installer, or grab the portable build and run it without installing.
+
+**macOS:** скачай `Catodoro-<версия>-mac-arm64.dmg` для Apple Silicon или `mac-x64.dmg` для Intel. Приложение не подписано, поэтому при первом запуске нажми на нём правой кнопкой и выбери «Открыть». / The app is not signed, so on the first launch right click it and choose Open.
+
 ## 🚀 Запуск / Run
 
 Нужен свежий Node.js (20 или новее) / Requires a recent Node.js (20 or newer).

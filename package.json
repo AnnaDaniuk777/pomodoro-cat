@@ -1,7 +1,11 @@
 {
-  "name": "cat-animation",
+  "name": "catodoro",
+  "productName": "Catodoro",
+  "description": "Pomodoro timer with a pixel cat companion",
+  "author": "Anna Daniuk",
+  "license": "GPL-3.0",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "dist-electron/electron/main.mjs",
   "scripts": {
@@ -12,7 +16,10 @@
     "build:electron": "tsc -p tsconfig.electron.json && node -e \"['electron/main','electron/preload'].forEach(n=>require('fs').renameSync('dist-electron/'+n+'.js','dist-electron/'+n+'.mjs'))\"",
     "build": "tsc -b && vite build && npm run build:electron",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dist": "npm run build && electron-builder",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:mac": "npm run build && electron-builder --mac"
   },
   "dependencies": {
     "@fontsource/press-start-2p": "^5.2.7",
@@ -28,6 +35,7 @@
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
     "electron": "^42.2.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
