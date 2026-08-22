@@ -4,6 +4,7 @@ import {
   type WidgetPlayerState,
 } from '@/shared/lib/electron-api';
 import { IconButton } from '@/shared/ui/IconButton';
+import { useDragHandle } from '@/shared/lib/drag-handle';
 import panelBg from '@/shared/assets/player-widget/panel.png';
 import catImg from '@/shared/assets/player-widget/cat.png';
 import volumeSlider from '@/shared/assets/player-widget/volume-slider.png';
@@ -120,6 +121,9 @@ export function PlayerWidgetScreen() {
     const fraction = 1 - Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
     electronApi.playerCmd('volume', fraction);
   };
+
+  const timelineDrag = useDragHandle(({ clientX }) => seekFromPointer(clientX));
+  const volumeDrag = useDragHandle(({ clientY }) => volumeFromPointer(clientY));
 
   const adjustVolumeByWheel = (deltaY: number) => {
     electronApi.playerCmd(
@@ -256,16 +260,7 @@ export function PlayerWidgetScreen() {
         <div
           ref={timelineRef}
           className="pwidget__timeline"
-          onPointerDown={(e) => {
-            e.currentTarget.setPointerCapture(e.pointerId);
-            seekFromPointer(e.clientX);
-          }}
-          onPointerMove={(e) => {
-            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-              seekFromPointer(e.clientX);
-            }
-          }}
-          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
+          {...timelineDrag}
         >
           <img className="pwidget__timeline-empty" src={progressEmpty} alt="" />
           <div
@@ -287,16 +282,7 @@ export function PlayerWidgetScreen() {
           className="pwidget__volume-popup"
           style={{ left: volumeCenter }}
           onWheel={(e) => adjustVolumeByWheel(e.deltaY)}
-          onPointerDown={(e) => {
-            e.currentTarget.setPointerCapture(e.pointerId);
-            volumeFromPointer(e.clientY);
-          }}
-          onPointerMove={(e) => {
-            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-              volumeFromPointer(e.clientY);
-            }
-          }}
-          onPointerUp={(e) => e.currentTarget.releasePointerCapture(e.pointerId)}
+          {...volumeDrag}
         >
           <img className="pwidget__volume-popup-bg" src={volumeSlider} alt="" />
           <div ref={volumeTrackRef} className="pwidget__volume-track">
