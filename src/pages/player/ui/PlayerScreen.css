@@ -283,3 +283,10 @@
 .player__eq-lib--idle {
   opacity: 0.35;
 }
+
+.player__volume-catcher {
+  position: absolute;
+  inset: 0;
+  z-index: 14;
+  -webkit-app-region: no-drag;
+}

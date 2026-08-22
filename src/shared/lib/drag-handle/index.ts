@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 const CLICK_SLOP = 4;
+const FOLLOW_MARGIN = 10;
 
 type Point = { clientX: number; clientY: number };
 
@@ -20,9 +21,21 @@ export function useDragHandle(apply: (point: Point) => void) {
 
   useEffect(() => stopFollowing, [stopFollowing]);
 
-  const startFollowing = useCallback(() => {
+  const startFollowing = useCallback((element: Element) => {
     stopFollowing();
-    const move = (event: MouseEvent) => applyRef.current(event);
+    const move = (event: MouseEvent) => {
+      const box = element.getBoundingClientRect();
+      const inside =
+        event.clientX >= box.left - FOLLOW_MARGIN &&
+        event.clientX <= box.right + FOLLOW_MARGIN &&
+        event.clientY >= box.top - FOLLOW_MARGIN &&
+        event.clientY <= box.bottom + FOLLOW_MARGIN;
+      if (!inside) {
+        stopFollowing();
+        return;
+      }
+      applyRef.current(event);
+    };
     const stop = () => stopFollowing();
     window.addEventListener('mousemove', move);
     window.addEventListener('mousedown', stop);
@@ -62,7 +75,7 @@ export function useDragHandle(apply: (point: Point) => void) {
   const onPointerUp = useCallback(
     (event: React.PointerEvent) => {
       event.currentTarget.releasePointerCapture(event.pointerId);
-      if (!pressRef.current.moved) startFollowing();
+      if (!pressRef.current.moved) startFollowing(event.currentTarget);
     },
     [startFollowing],
   );

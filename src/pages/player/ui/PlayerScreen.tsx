@@ -306,6 +306,12 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
       </div>
       {volumeOpen && (
         <div
+          className="player__volume-catcher"
+          onMouseDown={() => setVolumeOpen(false)}
+        />
+      )}
+      {volumeOpen && (
+        <div
           className="player__volume-popup"
           style={
             volumeCenter !== null
