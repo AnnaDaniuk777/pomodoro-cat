@@ -87,6 +87,26 @@ export function PlayerWidgetScreen() {
     measureVolumeCenter();
   }, []);
 
+  useEffect(() => {
+    if (!volumeOpen) return;
+    const closeIfOutside = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      const insidePopup = document
+        .querySelector('.pwidget__volume-popup')
+        ?.contains(target);
+      const insideButton = volumeWrapRef.current?.contains(target);
+      if (!insidePopup && !insideButton) setVolumeOpen(false);
+    };
+    const closeOnBlur = () => setVolumeOpen(false);
+    window.addEventListener('mousedown', closeIfOutside);
+    window.addEventListener('blur', closeOnBlur);
+    return () => {
+      window.removeEventListener('mousedown', closeIfOutside);
+      window.removeEventListener('blur', closeOnBlur);
+    };
+  }, [volumeOpen]);
+
   const seekFromPointer = (clientX: number) => {
     const rect = timelineRef.current?.getBoundingClientRect();
     if (!rect || rect.width === 0) return;
