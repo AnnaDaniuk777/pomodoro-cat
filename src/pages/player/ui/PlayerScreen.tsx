@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getAudioGraph, playerStore, usePlayer } from '@/entities/player';
 import { useDragHandle } from '@/shared/lib/drag-handle';
+import { t, useLang } from '@/shared/lib/i18n';
 import { Titlebar } from '@/widgets/titlebar';
 import { IconButton } from '@/shared/ui/IconButton';
 import playerBg from '@/shared/assets/player/music-screen-background.png';
@@ -211,6 +212,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
     usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [eqStyle, setEqStyle] = useState(loadEqStyle);
+  useLang();
   const [volumeCenter, setVolumeCenter] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -393,6 +395,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
           className="player__eq-switch"
           role="button"
           aria-label="Change equalizer style"
+          title={t('eqHint')}
           onClick={() => {
             const next = (eqStyle + 1) % EQ_STYLES.length;
             setEqStyle(next);

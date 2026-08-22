@@ -54,7 +54,7 @@ Catodoro помогает держать фокус по методике Pomodo
 - **Громкость.** Колёсико мыши над динамиком меняет громкость, не открывая ползунок. Клик по динамику раскрывает ползунок, кружок на нём ведётся так же, как лапка. Клик в любом другом месте окна закрывает ползунок.
 - **Название трека.** Если оно не помещается, наведи мышь, и строка проедет до конца с остановками по краям.
 - **Плейлист.** Клик по строке включает трек или ставит его на паузу, мусорка удаляет. Порядок и пути файлов сохраняются, так что после перезапуска плейлист останется на месте.
-- **Эквалайзер** показывает настоящий спектр того, что играет, а не заранее записанную картинку.
+- **Эквалайзер** показывает настоящий спектр того, что играет, а не заранее записанную картинку. Кликни по нему, и он сменит вид: всего десять вариантов, от блочных полос до линии и зеркального отражения. Выбранный запомнится.
 
 #### ✅ Список задач
 
@@ -130,7 +130,7 @@ Playback controls:
 - **Volume.** Scrolling over the speaker changes the volume without opening the slider. Clicking the speaker opens it, and its knob moves just like the paw. A click anywhere else in the window closes it.
 - **Track title.** If it does not fit, hover it and the line scrolls across with a pause at both ends.
 - **Playlist.** Clicking a row plays or pauses that track, the bin removes it. Order and file paths are saved, so the playlist survives a restart.
-- **The equalizer** shows the real spectrum of whatever is playing, not a canned animation.
+- **The equalizer** shows the real spectrum of whatever is playing, not a canned animation. Click it to change its look: ten variants, from blocky bars to a line graph and a mirrored view. Your pick is remembered.
 
 #### ✅ Task list
 

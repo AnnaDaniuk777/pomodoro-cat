@@ -297,3 +297,7 @@
   cursor: pointer;
   -webkit-app-region: no-drag;
 }
+
+.player__equalizer:hover .player__eq-bg {
+  filter: brightness(1.3);
+}

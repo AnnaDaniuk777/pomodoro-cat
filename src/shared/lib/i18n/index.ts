@@ -23,6 +23,7 @@ const translations = {
     workEndLong: 'Session done, time for a long break!',
     breakEndAuto: 'Break over, back to work!',
     breakEnd: 'Break over!',
+    eqHint: 'Click to change the equalizer look',
   },
   ru: {
     settingsTitle: 'Настройки',
@@ -44,6 +45,7 @@ const translations = {
     workEndLong: 'Сессия окончена, время долгого перерыва!',
     breakEndAuto: 'Перерыв окончен, за работу!',
     breakEnd: 'Перерыв окончен!',
+    eqHint: 'Клик меняет вид эквалайзера',
   },
 } as const;
 
