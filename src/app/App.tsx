@@ -136,16 +136,26 @@ export function App() {
   usePlayerWidgetSync();
   usePreloadAssets();
 
-  if (screen === 'player') {
-    return <PlayerScreen onBack={() => setScreen('main')} />;
-  }
-  if (screen === 'todo') {
-    return <TodoScreen onBack={() => setScreen('main')} />;
-  }
+  const slot = (name: Screen) =>
+    screen === name ? 'screen-slot' : 'screen-slot screen-slot--hidden';
+
   return (
-    <MainScreen
-      onOpenPlayer={() => setScreen('player')}
-      onOpenTodo={() => setScreen('todo')}
-    />
+    <>
+      <div className={slot('main')}>
+        <MainScreen
+          onOpenPlayer={() => setScreen('player')}
+          onOpenTodo={() => setScreen('todo')}
+        />
+      </div>
+      <div className={slot('player')}>
+        <PlayerScreen
+          visible={screen === 'player'}
+          onBack={() => setScreen('main')}
+        />
+      </div>
+      <div className={slot('todo')}>
+        <TodoScreen onBack={() => setScreen('main')} />
+      </div>
+    </>
   );
 }

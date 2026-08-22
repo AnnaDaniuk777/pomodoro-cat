@@ -212,9 +212,10 @@ function formatTime(seconds: number): string {
 
 type PlayerScreenProps = {
   onBack: () => void;
+  visible?: boolean;
 };
 
-export function PlayerScreen({ onBack }: PlayerScreenProps) {
+export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
   const { tracks, currentIndex, isPlaying, currentTime, duration, volume } =
     usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
@@ -380,7 +381,7 @@ export function PlayerScreen({ onBack }: PlayerScreenProps) {
       )}
       <div className="player__equalizer">
         <img className="player__eq-bg" src={equalizerBg} alt="" />
-        <Equalizer active={isPlaying} />
+        <Equalizer active={isPlaying && visible} />
       </div>
       <div className="player__timeline-row">
         <span className="player__time">{formatTime(currentTime)}</span>

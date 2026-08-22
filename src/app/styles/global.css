@@ -89,3 +89,11 @@ img {
   width: calc(11px * var(--screen-scale));
   height: calc(12px * var(--screen-scale));
 }
+
+.screen-slot {
+  display: contents;
+}
+
+.screen-slot--hidden {
+  display: none;
+}
