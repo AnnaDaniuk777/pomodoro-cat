@@ -50,8 +50,11 @@ Catodoro помогает держать фокус по методике Pomodo
 
 - **Перемотка.** Зажми «назад» или «вперёд», и трек будет отматываться, пока держишь кнопку.
 - **Кнопка «назад».** Короткое нажатие возвращает трек в начало, второе подряд переключает на предыдущий.
-- **Позиция в треке.** Тащи лапку по полоске или кликни в нужное место.
-- **Громкость.** Колёсико мыши над иконкой динамика, либо клик по ней и перетаскивание кружка. Клик мимо закрывает регулятор.
+- **Позиция в треке.** Кликни в любое место полоски, и лапка прыгнет туда. Лапку можно вести двумя способами: зажать и тащить, либо просто щёлкнуть по ней, тогда она поедет за курсором сама, пока не щёлкнешь ещё раз.
+- **Громкость.** Колёсико мыши над динамиком меняет громкость, не открывая ползунок. Клик по динамику раскрывает ползунок, кружок на нём ведётся так же, как лапка. Клик в любом другом месте окна закрывает ползунок.
+- **Название трека.** Если оно не помещается, наведи мышь, и строка проедет до конца с остановками по краям.
+- **Плейлист.** Клик по строке включает трек или ставит его на паузу, мусорка удаляет. Порядок и пути файлов сохраняются, так что после перезапуска плейлист останется на месте.
+- **Эквалайзер** показывает настоящий спектр того, что играет, а не заранее записанную картинку.
 
 #### ✅ Список задач
 
@@ -123,8 +126,11 @@ Playback controls:
 
 - **Scrubbing.** Hold previous or next and the track rewinds while you keep the button down.
 - **Previous button.** A short press restarts the track, a second press switches to the previous one.
-- **Position.** Drag the paw along the bar or click anywhere on it.
-- **Volume.** Scroll over the speaker icon, or click it and drag the knob. Clicking outside closes the slider.
+- **Position.** Click anywhere on the bar and the paw jumps there. You can move the paw in two ways: hold and drag it, or simply click it and it will follow the cursor until you click again.
+- **Volume.** Scrolling over the speaker changes the volume without opening the slider. Clicking the speaker opens it, and its knob moves just like the paw. A click anywhere else in the window closes it.
+- **Track title.** If it does not fit, hover it and the line scrolls across with a pause at both ends.
+- **Playlist.** Clicking a row plays or pauses that track, the bin removes it. Order and file paths are saved, so the playlist survives a restart.
+- **The equalizer** shows the real spectrum of whatever is playing, not a canned animation.
 
 #### ✅ Task list
 
