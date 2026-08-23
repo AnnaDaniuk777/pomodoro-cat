@@ -79,7 +79,8 @@ function useWidgetSync() {
 }
 
 function usePlayerWidgetSync() {
-  const { tracks, isPlaying, currentTime, duration, volume } = usePlayer();
+  const { tracks, isPlaying, currentTime, duration, volume, repeatPlaylist } =
+    usePlayer();
 
   useEffect(() => {
     electronApi.sendPlayerState({
@@ -87,8 +88,9 @@ function usePlayerWidgetSync() {
       isPlaying,
       progress: duration > 0 ? currentTime / duration : 0,
       volume,
+      repeat: repeatPlaylist,
     });
-  }, [tracks.length, isPlaying, currentTime, duration, volume]);
+  }, [tracks.length, isPlaying, currentTime, duration, volume, repeatPlaylist]);
 
   useEffect(() => {
     void playerStore.restorePlaylist();
@@ -120,6 +122,8 @@ function usePlayerWidgetSync() {
         if (total > 0) playerStore.seek(value * total);
       } else if (cmd === 'scrub' && typeof value === 'number') {
         playerStore.scrub(value);
+      } else if (cmd === 'repeat') {
+        playerStore.toggleRepeat();
       }
     });
   }, []);

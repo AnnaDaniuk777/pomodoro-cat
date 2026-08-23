@@ -9,6 +9,7 @@ export type WidgetPlayerState = {
   isPlaying: boolean;
   progress: number;
   volume: number;
+  repeat: boolean;
 };
 
 export type PlayerCommand =
@@ -17,7 +18,8 @@ export type PlayerCommand =
   | 'prev'
   | 'volume'
   | 'seek'
-  | 'scrub';
+  | 'scrub'
+  | 'repeat';
 
 export type SolidZone = { x: number; y: number; w: number; h: number };
 

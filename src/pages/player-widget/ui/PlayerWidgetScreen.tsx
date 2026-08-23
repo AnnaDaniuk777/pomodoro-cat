@@ -20,6 +20,8 @@ import folderBtn from '@/shared/assets/player-widget/folder-button.png';
 import progressEmpty from '@/shared/assets/player-widget/progress-empty.png';
 import progressFilled from '@/shared/assets/player-widget/progress-filled.png';
 import pawImg from '@/shared/assets/player-widget/paw.png';
+import repeatBtn from '@/shared/assets/player-widget/repeat-button.png';
+import repeatOnBtn from '@/shared/assets/player-widget/repeat-button-on.png';
 import closeBtn from '@/shared/assets/player-widget/close-button.png';
 import restoreBtn from '@/shared/assets/player-widget/restore-button.png';
 import './PlayerWidgetScreen.css';
@@ -30,6 +32,7 @@ export function PlayerWidgetScreen() {
     isPlaying: false,
     progress: 0,
     volume: 0.7,
+    repeat: true,
   });
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [volumeCenter, setVolumeCenter] = useState(193);
@@ -265,7 +268,7 @@ export function PlayerWidgetScreen() {
           <img className="pwidget__timeline-empty" src={progressEmpty} alt="" />
           <div
             className="pwidget__timeline-filled-wrap"
-            style={{ width: `${player.progress * 100}%` }}
+            style={{ '--progress': player.progress } as React.CSSProperties}
           >
             <img className="pwidget__timeline-filled" src={progressFilled} alt="" />
           </div>
@@ -276,6 +279,12 @@ export function PlayerWidgetScreen() {
             style={{ left: `${player.progress * 100}%` }}
           />
         </div>
+        <IconButton
+          icon={player.repeat ? repeatOnBtn : repeatBtn}
+          alt="Repeat playlist"
+          className="pwidget__repeat"
+          onClick={() => electronApi.playerCmd('repeat')}
+        />
       </div>
       {volumeOpen && (
         <div

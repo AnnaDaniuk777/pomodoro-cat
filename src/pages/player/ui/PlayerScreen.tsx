@@ -21,6 +21,8 @@ import equalizerBg from '@/shared/assets/player/equalizer-bg.png';
 import timelineEmpty from '@/shared/assets/player/timeline-empty.png';
 import timelineFilled from '@/shared/assets/player/timeline-filled.png';
 import pawThumb from '@/shared/assets/player/paw-thumb.png';
+import repeatBtn from '@/shared/assets/player/repeat-button.png';
+import repeatOnBtn from '@/shared/assets/player/repeat-button-on.png';
 import trackPlayBtn from '@/shared/assets/player/track-play-button.png';
 import trackPauseBtn from '@/shared/assets/player/track-pause-button.png';
 import trackDeleteBtn from '@/shared/assets/todo/trash-light.png';
@@ -208,8 +210,15 @@ type PlayerScreenProps = {
 };
 
 export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
-  const { tracks, currentIndex, isPlaying, currentTime, duration, volume } =
-    usePlayer();
+  const {
+    tracks,
+    currentIndex,
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    repeatPlaylist,
+  } = usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [eqStyle, setEqStyle] = useState(loadEqStyle);
   useLang();
@@ -415,7 +424,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
           <img className="player__timeline-empty" src={timelineEmpty} alt="" />
           <div
             className="player__timeline-filled-wrap"
-            style={{ width: `${progress * 100}%` }}
+            style={{ '--progress': progress } as React.CSSProperties}
           >
             <img className="player__timeline-filled" src={timelineFilled} alt="" />
           </div>
@@ -426,6 +435,12 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
             style={{ left: `${progress * 100}%` }}
           />
         </div>
+        <IconButton
+          icon={repeatPlaylist ? repeatOnBtn : repeatBtn}
+          alt={t('repeat')}
+          className="player__repeat"
+          onClick={() => playerStore.toggleRepeat()}
+        />
       </div>
       <div className="player__playlist">
         {tracks.map((track, index) => {
