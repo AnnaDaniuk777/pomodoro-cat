@@ -4,6 +4,7 @@ import {
   useSpriteAnimation,
   type AsepriteJSON,
 } from '@/entities/cat';
+import { cssUrl } from '@/shared/lib/css-url';
 
 type SpriteBurstProps = {
   sheet: string;
@@ -36,7 +37,7 @@ export function SpriteBurst({
       style={{
         width: w * scale,
         height: h * scale,
-        backgroundImage: `url(${sheet})`,
+        backgroundImage: cssUrl(sheet),
         backgroundPosition: `-${x * scale}px -${y * scale}px`,
         backgroundSize: `${sheetW * scale}px ${sheetH * scale}px`,
         backgroundRepeat: 'no-repeat',

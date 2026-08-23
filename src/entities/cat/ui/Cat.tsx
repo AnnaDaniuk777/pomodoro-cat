@@ -10,6 +10,7 @@ import chillStartData from '@/shared/assets/sprites/cat-chill-start.json';
 import chillSleepSheet from '@/shared/assets/sprites/cat-chill-sleep.png';
 import chillSleepData from '@/shared/assets/sprites/cat-chill-sleep.json';
 import { CAT_SCALE } from '@/shared/config';
+import { cssUrl } from '@/shared/lib/css-url';
 import {
   extractFrames,
   useSpriteAnimation,
@@ -113,7 +114,7 @@ export function Cat({ animation = 'idle' }: CatProps) {
       style={{
         width: w * renderScale,
         height: h * renderScale,
-        backgroundImage: `url(${clip.sheet})`,
+        backgroundImage: cssUrl(clip.sheet),
         backgroundPosition: `-${x * renderScale}px -${y * renderScale}px`,
         backgroundSize: `${sheetW * renderScale}px ${sheetH * renderScale}px`,
         backgroundRepeat: 'no-repeat',
