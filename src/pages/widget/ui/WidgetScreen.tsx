@@ -9,6 +9,7 @@ import {
   type WidgetTimerState,
 } from '@/shared/lib/electron-api';
 import { progressColor } from '@/shared/lib/tray-icon';
+import { cssUrl } from '@/shared/lib/css-url';
 import './WidgetScreen.css';
 
 const RING_RADIUS = 39;
@@ -78,7 +79,7 @@ export function WidgetScreen() {
       <div
         className="widget__sprite"
         style={{
-          backgroundImage: `url(${sheet})`,
+          backgroundImage: cssUrl(sheet),
           backgroundPosition: `-${x}px -${y}px`,
           backgroundSize: `${sheetW}px ${sheetH}px`,
         }}

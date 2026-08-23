@@ -5,6 +5,7 @@ import {
 } from '@/shared/lib/electron-api';
 import { IconButton } from '@/shared/ui/IconButton';
 import { useDragHandle } from '@/shared/lib/drag-handle';
+import { cssUrl } from '@/shared/lib/css-url';
 import panelBg from '@/shared/assets/player-widget/panel.png';
 import catImg from '@/shared/assets/player-widget/cat.png';
 import volumeSlider from '@/shared/assets/player-widget/volume-slider.png';
@@ -188,7 +189,7 @@ export function PlayerWidgetScreen() {
       />
       <div
         className="pwidget__panel"
-        style={{ backgroundImage: `url(${panelBg})` }}
+        style={{ backgroundImage: cssUrl(panelBg) }}
       >
         <div className="pwidget__window-btns">
           <IconButton
