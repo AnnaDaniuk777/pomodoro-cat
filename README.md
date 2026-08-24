@@ -42,7 +42,7 @@ Catodoro помогает держать фокус по методике Pomodo
 
 ![Настройки](docs/settings.png)
 
-Длительности работы, короткого и длинного перерыва, число сессий до длинного перерыва, авто-цикл, звук и громкость, уведомления, режим «поверх всех окон», повтор плейлиста и переключение языка (русский и английский).
+Длительности работы, короткого и длинного перерыва, число сессий до длинного перерыва, авто-цикл, звук и громкость, уведомления, режим «поверх всех окон», повтор трека и переключение языка (русский и английский).
 
 #### 🎵 Музыкальный плеер
 
@@ -118,7 +118,7 @@ When a break starts, the cat lies down and falls asleep. Click the bowl or the y
 
 ![Settings](docs/settings.png)
 
-Work, short break and long break durations, the number of sessions before a long break, auto cycle, sound and volume, notifications, an always on top mode, playlist repeat and language switching (Russian and English).
+Work, short break and long break durations, the number of sessions before a long break, auto cycle, sound and volume, notifications, an always on top mode, track repeat and language switching (Russian and English).
 
 #### 🎵 Music player
 

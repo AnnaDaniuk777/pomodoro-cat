@@ -33,7 +33,7 @@ export function PlayerWidgetScreen() {
     isPlaying: false,
     progress: 0,
     volume: 0.7,
-    repeat: true,
+    repeat: false,
   });
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [volumeCenter, setVolumeCenter] = useState(193);

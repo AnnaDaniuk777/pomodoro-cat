@@ -20,7 +20,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
     notificationsEnabled,
     alwaysOnTop,
   } = useTimer();
-  const repeatPlaylist = usePlayer((state) => state.repeatPlaylist);
+  const repeatTrack = usePlayer((state) => state.repeatTrack);
   const lang = useLang();
 
   return (
@@ -113,7 +113,7 @@ export function SettingsSheet({ onClose }: SettingsSheetProps) {
             <span>{t('repeat')}</span>
             <input
               type="checkbox"
-              checked={repeatPlaylist}
+              checked={repeatTrack}
               onChange={() => playerStore.toggleRepeat()}
             />
           </label>
