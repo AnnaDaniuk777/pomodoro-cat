@@ -8,6 +8,10 @@
 
 > Личный проект в две руки. Код: Анна ([@AnnaDaniuk777](https://github.com/AnnaDaniuk777)). Дизайн, пиксель-арт и анимации кота: [@lobotomy-online](https://github.com/lobotomy-online).
 
+<p align="center">
+  <img src="docs/demo.gif" width="366" alt="Клик по коту запускает таймер, и кот начинает играть с мячиком / Clicking the cat starts the timer and the cat plays with a ball">
+</p>
+
 **Язык / Language:** &nbsp; [🇷🇺 Русский](#-русский) &nbsp;|&nbsp; [🇬🇧 English](#-english)
 
 ---
