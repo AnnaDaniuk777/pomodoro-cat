@@ -1,7 +1,10 @@
 import { chromium } from 'playwright';
 import { writeFileSync, mkdirSync } from 'node:fs';
+import pngjs from 'pngjs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
+const { PNG } = pngjs;
 
 const URL = process.env.SHOT_URL ?? 'http://localhost:5173';
 const OUT = 'docs';
@@ -60,11 +63,43 @@ async function shot(name, selector = `${LIVE} .screen`) {
   done.push(name);
   console.log('captured: ' + name);
 }
+
+function openEyeScore(png) {
+  const { width, height, data } = PNG.sync.read(png);
+  let score = 0;
+  for (let i = 0; i < width * height; i += 1) {
+    const r = data[i * 4];
+    const g = data[i * 4 + 1];
+    const b = data[i * 4 + 2];
+    if (r < 130 && g < r && r > b + 15) score += 1;
+  }
+  return score;
+}
+
+async function shotAwake(name, selector = `${LIVE} .screen`) {
+  const el = page.locator(selector).first();
+  await el.waitFor({ state: 'visible' });
+  await page.waitForTimeout(300);
+  let best = null;
+  let bestScore = -1;
+  for (let i = 0; i < 14; i += 1) {
+    const frame = await el.screenshot();
+    const score = openEyeScore(frame);
+    if (score > bestScore) {
+      bestScore = score;
+      best = frame;
+    }
+    await page.waitForTimeout(70);
+  }
+  writeFileSync(join(OUT, `${name}.png`), best);
+  done.push(name);
+  console.log('captured: ' + name);
+}
 const tap = (selector) => page.locator(`${LIVE} ${selector}`).first().click();
 const byLabel = (label) => `button[aria-label="${label}"]`;
 
 await page.goto(URL, { waitUntil: 'networkidle' });
-await shot('main');
+await shotAwake('main');
 
 await tap(byLabel('Settings'));
 await shot('settings');
@@ -105,7 +140,15 @@ await shot('widget-timer', '.widget');
 await page.goto(`${URL}#player-widget`, { waitUntil: 'networkidle' });
 await page.reload({ waitUntil: 'networkidle' });
 await page.locator('.pwidget').waitFor({ state: 'visible' });
-await page.waitForTimeout(400);
+await page.waitForFunction(() => {
+  const cat = document.querySelector('.pwidget__cat');
+  const volume = document.querySelector('.pwidget__volume-btn');
+  if (!cat || !volume) return false;
+  const a = cat.getBoundingClientRect();
+  const b = volume.getBoundingClientRect();
+  return Math.abs(a.left + a.width / 2 - (b.left + b.width / 2)) < 1;
+});
+await page.waitForTimeout(500);
 const clip = await page.evaluate(() => {
   const parts = [...document.querySelectorAll('.pwidget__panel, .pwidget__cat, .pwidget__window-btns')];
   const boxes = parts.map((el) => el.getBoundingClientRect());
