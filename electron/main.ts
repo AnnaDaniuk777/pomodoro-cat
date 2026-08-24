@@ -220,6 +220,7 @@ function createWindow() {
     fullscreenable: false,
     frame: false,
     thickFrame: false,
+    backgroundColor: '#242641',
     icon: path.join(__dirname, '../../build/app-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
