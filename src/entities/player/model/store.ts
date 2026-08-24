@@ -15,14 +15,14 @@ export type PlayerState = {
   currentTime: number;
   duration: number;
   volume: number;
-  repeatPlaylist: boolean;
+  repeatTrack: boolean;
 };
 
 function loadRepeat(): boolean {
   try {
-    return localStorage.getItem('catodoro-repeat') !== 'off';
+    return localStorage.getItem('catodoro-repeat') === 'on';
   } catch {
-    return true;
+    return false;
   }
 }
 
@@ -75,7 +75,7 @@ let state: PlayerState = {
   currentTime: 0,
   duration: 0,
   volume: 0.7,
-  repeatPlaylist: loadRepeat(),
+  repeatTrack: loadRepeat(),
 };
 
 const listeners = new Set<() => void>();
@@ -95,8 +95,13 @@ audio.addEventListener('loadedmetadata', () => {
   setState({ duration: audio.duration });
 });
 audio.addEventListener('ended', () => {
-  const isLast = state.currentIndex === state.tracks.length - 1;
-  if (isLast && !state.repeatPlaylist) {
+  if (state.repeatTrack) {
+    audio.currentTime = 0;
+    setState({ currentTime: 0 });
+    void audio.play().catch(() => {});
+    return;
+  }
+  if (state.currentIndex === state.tracks.length - 1) {
     setState({ isPlaying: false, currentTime: 0 });
     return;
   }
@@ -233,8 +238,8 @@ export const playerStore = {
     setState({ volume: clamped });
   },
   toggleRepeat() {
-    const next = !state.repeatPlaylist;
-    setState({ repeatPlaylist: next });
+    const next = !state.repeatTrack;
+    setState({ repeatTrack: next });
     try {
       localStorage.setItem('catodoro-repeat', next ? 'on' : 'off');
     } catch {}

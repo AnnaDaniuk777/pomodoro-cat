@@ -79,7 +79,7 @@ function useWidgetSync() {
 }
 
 function usePlayerWidgetSync() {
-  const { tracks, isPlaying, currentTime, duration, volume, repeatPlaylist } =
+  const { tracks, isPlaying, currentTime, duration, volume, repeatTrack } =
     usePlayer();
 
   useEffect(() => {
@@ -88,9 +88,9 @@ function usePlayerWidgetSync() {
       isPlaying,
       progress: duration > 0 ? currentTime / duration : 0,
       volume,
-      repeat: repeatPlaylist,
+      repeat: repeatTrack,
     });
-  }, [tracks.length, isPlaying, currentTime, duration, volume, repeatPlaylist]);
+  }, [tracks.length, isPlaying, currentTime, duration, volume, repeatTrack]);
 
   useEffect(() => {
     void playerStore.restorePlaylist();

@@ -47,7 +47,6 @@ export function CatStage() {
   const [poof, setPoof] = useState<PoofPhase>('none');
   const [catBack, setCatBack] = useState(true);
   const timers = useRef<number[]>([]);
-  const pendingRef = useRef<Treat>('none');
 
   useEffect(
     () => () => {
@@ -58,16 +57,8 @@ export function CatStage() {
 
   const startTreat = (kind: Exclude<Treat, 'none'>) => {
     if (animation !== 'idle' || poof !== 'none' || treat !== 'none') return;
-    pendingRef.current = kind;
     setPoof('vanish');
     setCatBack(false);
-  };
-
-  const finishVanish = useCallback(() => {
-    setPoof('gone');
-    const kind = pendingRef.current;
-    pendingRef.current = 'none';
-    if (kind === 'none') return;
     setTreat(kind);
     timers.current.push(
       window.setTimeout(() => setPoof('return'), TREAT_DURATION - POOF_LEAD),
@@ -76,7 +67,9 @@ export function CatStage() {
         TREAT_DURATION - POOF_LEAD + CAT_RETURN_DELAY,
       ),
     );
-  }, []);
+  };
+
+  const finishVanish = useCallback(() => setPoof('gone'), []);
   const finishReturn = useCallback(() => {
     setPoof('none');
     setCatBack(true);

@@ -217,7 +217,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
     currentTime,
     duration,
     volume,
-    repeatPlaylist,
+    repeatTrack,
   } = usePlayer();
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [eqStyle, setEqStyle] = useState(loadEqStyle);
@@ -436,7 +436,7 @@ export function PlayerScreen({ onBack, visible = true }: PlayerScreenProps) {
           />
         </div>
         <IconButton
-          icon={repeatPlaylist ? repeatOnBtn : repeatBtn}
+          icon={repeatTrack ? repeatOnBtn : repeatBtn}
           alt={t('repeat')}
           className="player__repeat"
           onClick={() => playerStore.toggleRepeat()}
