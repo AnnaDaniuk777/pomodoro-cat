@@ -1,7 +1,7 @@
 :root {
   --screen-scale: 1.6;
-  --screen-w: calc(229px * var(--screen-scale));
-  --screen-h: calc(248px * var(--screen-scale));
+  --screen-w: round(nearest, 229px * var(--screen-scale), 1px);
+  --screen-h: round(nearest, 248px * var(--screen-scale), 1px);
 
   --titlebar-scale: 1.5;
 
